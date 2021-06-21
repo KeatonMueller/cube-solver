@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <string>
 
 class Cube
 {
@@ -53,6 +54,11 @@ public:
 	Cube();
 
 	/**
+	* Read and execute a sequence of moves.
+	*/
+	void readMoves(const std::string& moves);
+
+	/**
 	* Functions for turning the Rubik's Cube
 	*/
 	void u();
@@ -90,15 +96,29 @@ private:
 	*/
 	uint64_t stickers[7];
 
+	/**
+	* Bit masks for selecting specific rows of stickers
+	*/
 	uint64_t upMask = 0xffffff0000000000;
 	uint64_t rightMask = 0x0000ffffff000000;
 	uint64_t downMask = 0x00000000ffffff00;
 	uint64_t leftMask = 0xff0000000000ffff;
 
+	/**
+	* Helper functions for selecting specific stickers
+	*/
 	char getColorChar(COLOR c);
 	uint64_t getFace(FACE f);
 	COLOR getCenter(FACE f);
 	COLOR getSticker(FACE f, uint8_t idx);
 	uint64_t getRow(FACE f, FACE row);
+	/**
+	* Helper function for updating the value of a specific face
+	*/
 	void setFace(FACE f, uint64_t value);
+
+	/**
+	* Read and execute a single move.
+	*/
+	void readMove(const std::string& move);
 };

@@ -64,13 +64,13 @@ uint64_t Cube::getRow(FACE f, FACE row)
 	switch (row)
 	{
 	case FACE::UP:
-		return (face & 0xffffff0000000000) >> 40;
+		return (face & upMask) >> 40;
 	case FACE::DOWN:
-		return (face & 0xffffff00) >> 8;
+		return (face & downMask) >> 8;
 	case FACE::RIGHT:
-		return (face & 0xffffff000000) >> 24;
+		return (face & rightMask) >> 24;
 	case FACE::LEFT:
-		return rotateLeft((face & 0xff0000000000ffff), 8);
+		return rotateLeft((face & leftMask), 8);
 	default:
 		return 0;
 	}
@@ -82,6 +82,59 @@ uint64_t Cube::getRow(FACE f, FACE row)
 void Cube::setFace(FACE f, uint64_t value)
 {
 	stickers[(uint8_t)f] = value;
+}
+
+/**
+* Perform every move present in the string of moves.
+* No spaces are allowed in the input string.
+*/
+void Cube::readMoves(const std::string& moves)
+{
+	int moveIdx = 0;
+	while (moveIdx < moves.length())
+	{
+		if (moveIdx < moves.length() - 1 && (moves[moveIdx + 1] == '\'' || moves[moveIdx + 1] == '2'))
+		{
+			readMove(moves.substr(moveIdx, 2));
+			moveIdx += 2;
+		}
+		else
+		{
+			readMove(moves.substr(moveIdx, 1));
+			moveIdx += 1;
+		}
+	}
+}
+
+/**
+* Perform the single move represented by the given string.
+*/
+void Cube::readMove(const std::string& move)
+{
+	if (move == "U")
+		u();
+	else if (move == "U\'")
+		uPrime();
+	else if (move == "D")
+		d();
+	else if (move == "D\'")
+		dPrime();
+	else if (move == "F")
+		f();
+	else if (move == "F\'")
+		fPrime();
+	else if (move == "B")
+		b();
+	else if (move == "B\'")
+		bPrime();
+	else if (move == "R")
+		r();
+	else if (move == "R\'")
+		rPrime();
+	else if (move == "L")
+		l();
+	else if (move == "L\'")
+		lPrime();
 }
 
 /**
@@ -101,6 +154,22 @@ void Cube::u()
 }
 
 /**
+* Perform a counter clockwise rotation of the up face.
+*/
+void Cube::uPrime()
+{
+	// turn the up face
+	setFace(FACE::UP, rotateLeft(getFace(FACE::UP), 16));
+
+	// turn the adjacent stickers on the front, left, back, and right faces
+	uint64_t toSave = getFace(FACE::FRONT) & upMask;
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~upMask) | (getFace(FACE::LEFT) & upMask));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~upMask) | (getFace(FACE::BACK) & upMask));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~upMask) | (getFace(FACE::RIGHT) & upMask));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~upMask) | toSave);
+}
+
+/**
 * Perform a clockwise rotation of the down face.
 */
 void Cube::d()
@@ -114,6 +183,22 @@ void Cube::d()
 	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~downMask) | (getFace(FACE::BACK) & downMask));
 	setFace(FACE::BACK, (getFace(FACE::BACK) & ~downMask) | (getFace(FACE::RIGHT) & downMask));
 	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~downMask) | toSave);
+}
+
+/**
+* Perform a counter clockwise rotation of the down face.
+*/
+void Cube::dPrime()
+{
+	// turn the down face
+	setFace(FACE::DOWN, rotateLeft(getFace(FACE::DOWN), 16));
+
+	// turn the adjacent stickers on the front, right, back, and left faces
+	uint64_t toSave = getFace(FACE::FRONT) & downMask;
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~downMask) | (getFace(FACE::RIGHT) & downMask));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~downMask) | (getFace(FACE::BACK) & downMask));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~downMask) | (getFace(FACE::LEFT) & downMask));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~downMask) | toSave);
 }
 
 /**
@@ -133,6 +218,22 @@ void Cube::f()
 }
 
 /**
+* Perform a counter clockwise rotation of the front face.
+*/
+void Cube::fPrime()
+{
+	// turn the front face
+	setFace(FACE::FRONT, rotateRight(getFace(FACE::FRONT), 16));
+
+	// turn the adjacent stickers on the up, right, bottom, and left faces 
+	uint64_t toSave = getFace(FACE::UP) & downMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~downMask) | rotateLeft(getFace(FACE::RIGHT) & leftMask, 16));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~leftMask) | rotateLeft(getFace(FACE::DOWN) & upMask, 16));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~upMask) | rotateLeft(getFace(FACE::LEFT) & rightMask, 16));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~rightMask) | (toSave << 16));
+}
+
+/**
 * Perform a clockwise rotation of the back face.
 */
 void Cube::b()
@@ -146,6 +247,22 @@ void Cube::b()
 	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~rightMask) | ((getFace(FACE::DOWN) & downMask) << 16));
 	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~downMask) | rotateLeft(getFace(FACE::LEFT) & leftMask, 16));
 	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~leftMask) | rotateLeft(toSave, 16));
+}
+
+/**
+* Perform a counter clockwise rotation of the back face.
+*/
+void Cube::bPrime()
+{
+	// turn the back face
+	setFace(FACE::BACK, rotateLeft(getFace(FACE::BACK), 16));
+
+	// turn the adjacent stickers on the up, left, down, and right faces 
+	uint64_t toSave = getFace(FACE::UP) & upMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~upMask) | rotateRight(getFace(FACE::LEFT) & leftMask, 16));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~leftMask) | rotateRight(getFace(FACE::DOWN) & downMask, 16));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~downMask) | ((getFace(FACE::RIGHT) & rightMask) >> 16));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~rightMask) | (toSave >> 16));
 }
 
 /**
@@ -165,6 +282,22 @@ void Cube::r()
 }
 
 /**
+* Perform a counter clockwise rotation of the right face.
+*/
+void Cube::rPrime()
+{
+	// turn the right face
+	setFace(FACE::RIGHT, rotateLeft(getFace(FACE::RIGHT), 16));
+
+	// turn the adjacent stickers on the up, back, down, and front faces 
+	uint64_t toSave = getFace(FACE::UP) & rightMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~rightMask) | rotateRight(getFace(FACE::BACK) & leftMask, 32));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~leftMask) | rotateRight(getFace(FACE::DOWN) & rightMask, 32));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~rightMask) | (getFace(FACE::FRONT) & rightMask));
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~rightMask) | toSave);
+}
+
+/**
 * Perform a clockwise rotation of the left face.
 */
 void Cube::l()
@@ -178,6 +311,22 @@ void Cube::l()
 	setFace(FACE::BACK, (getFace(FACE::BACK) & ~rightMask) | rotateRight(getFace(FACE::DOWN) & leftMask, 32));
 	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~leftMask) | (getFace(FACE::FRONT) & leftMask));
 	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~leftMask) | toSave);
+}
+
+/**
+* Perform a counter clockwise rotation of the left face.
+*/
+void Cube::lPrime()
+{
+	// turn the left face
+	setFace(FACE::LEFT, rotateLeft(getFace(FACE::LEFT), 16));
+
+	// turn the adjacent stickers on the up, front, down, and back faces 
+	uint64_t toSave = getFace(FACE::UP) & leftMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~leftMask) | (getFace(FACE::FRONT) & leftMask));
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~leftMask) | getFace(FACE::DOWN) & leftMask);
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~leftMask) | rotateRight(getFace(FACE::BACK) & rightMask, 32));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~rightMask) | rotateRight(toSave, 32));
 }
 
 /**
