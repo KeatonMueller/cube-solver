@@ -1,3 +1,6 @@
+#ifndef CUBE_H
+#define CUBE_H 
+
 #include <stdint.h>
 #include <string>
 #include <utility>
@@ -63,9 +66,14 @@ public:
 
 	Cube();
 
-	COLOR getCenter(FACE f);
-	COLOR getSticker(LOCATION l);
-	std::pair<LOCATION, bool> getAdjacentEdge(LOCATION l);
+	COLOR getCenter(FACE face);
+	COLOR getSticker(LOCATION loc);
+	std::pair<LOCATION, bool> getAdjacentEdge(LOCATION loc);
+
+	std::string move(FACE face, const std::string& type = "");
+	bool isEdgeSolved(LOCATION l);
+
+	void printLocation(LOCATION loc);
 
 	/**
 	* Read and execute a sequence of moves.
@@ -153,7 +161,6 @@ private:
 	*/
 	char getColorChar(COLOR c);
 	uint64_t getFace(FACE f);
-	uint64_t getRow(FACE f, FACE row);
 
 	/**
 	* Helper functions for updating the cube's values
@@ -166,3 +173,5 @@ private:
 	*/
 	void readMove(const std::string& move);
 };
+
+#endif

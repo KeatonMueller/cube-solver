@@ -56,16 +56,16 @@ Cube::COLOR Cube::getSticker(LOCATION l)
 * If a non-edge location is supplied, the second return value is set
 * to false, otherwise it is true indicating a successful execution.
 */
-std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
+std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION loc)
 {
 	// fail if provided location isn't an edge
-	if ((getFace(l.face) & edgesMask) == 0)
+	if (loc.idx % 2 == 0)
 		return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 
-	switch (l.face)
+	switch (loc.face)
 	{
 	case (FACE::UP):
-		switch (l.idx)
+		switch (loc.idx)
 		{
 		case 1:
 			return std::make_pair(LOCATION({ FACE::BACK, 1 }), true);
@@ -79,7 +79,7 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
 			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 		}
 	case (FACE::DOWN):
-		switch (l.idx)
+		switch (loc.idx)
 		{
 		case 1:
 			return std::make_pair(LOCATION({ FACE::FRONT, 5 }), true);
@@ -93,7 +93,7 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
 			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 		}
 	case (FACE::FRONT):
-		switch (l.idx)
+		switch (loc.idx)
 		{
 		case 1:
 			return std::make_pair(LOCATION({ FACE::UP, 5 }), true);
@@ -107,7 +107,7 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
 			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 		}
 	case (FACE::BACK):
-		switch (l.idx)
+		switch (loc.idx)
 		{
 		case 1:
 			return std::make_pair(LOCATION({ FACE::UP, 1 }), true);
@@ -121,7 +121,7 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
 			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 		}
 	case (FACE::RIGHT):
-		switch (l.idx)
+		switch (loc.idx)
 		{
 		case 1:
 			return std::make_pair(LOCATION({ FACE::UP, 3 }), true);
@@ -135,7 +135,7 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
 			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 		}
 	case (FACE::LEFT):
-		switch (l.idx)
+		switch (loc.idx)
 		{
 		case 1:
 			return std::make_pair(LOCATION({ FACE::UP, 7 }), true);
@@ -153,30 +153,132 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
 	}
 }
 
-/**
-* Return the row of three sticker colors on the requested face.
-*
-* The color data will always be shifted to be in the lowest order bits.
-*
-* Only UP, DOWN, RIGHT, and LEFT are allowed for the row parameter,
-* anything else will return 0.
-*/
-uint64_t Cube::getRow(FACE f, FACE row)
+std::string Cube::move(FACE face, const std::string& type)
 {
-	uint64_t face = getFace(f);
-	switch (row)
+	switch (face)
 	{
 	case FACE::UP:
-		return (face & upMask) >> 40;
+		if (type == "")
+		{
+			u();
+			return "U";
+		}
+		else if (type == "prime")
+		{
+			uPrime();
+			return "U\'";
+		}
+		else if (type == "2")
+		{
+			u();
+			u();
+			return "U2";
+		}
 	case FACE::DOWN:
-		return (face & downMask) >> 8;
+		if (type == "")
+		{
+			d();
+			return "D";
+		}
+		else if (type == "prime")
+		{
+			dPrime();
+			return "D\'";
+		}
+		else if (type == "2")
+		{
+			d();
+			d();
+			return "D2";
+		}
+	case FACE::FRONT:
+		if (type == "")
+		{
+			f();
+			return "F";
+		}
+		else if (type == "prime")
+		{
+			fPrime();
+			return "F\'";
+		}
+		else if (type == "2")
+		{
+			f();
+			f();
+			return "F2";
+		}
+	case FACE::BACK:
+		if (type == "")
+		{
+			b();
+			return "B";
+		}
+		else if (type == "prime")
+		{
+			bPrime();
+			return "B\'";
+		}
+		else if (type == "2")
+		{
+			b();
+			b();
+			return "B2";
+		}
 	case FACE::RIGHT:
-		return (face & rightMask) >> 24;
+		if (type == "")
+		{
+			r();
+			return "R";
+		}
+		else if (type == "prime")
+		{
+			rPrime();
+			return "R\'";
+		}
+		else if (type == "2")
+		{
+			r();
+			r();
+			return "R2";
+		}
 	case FACE::LEFT:
-		return rotateLeft((face & leftMask), 8);
-	default:
-		return 0;
+		if (type == "")
+		{
+			l();
+			return "L";
+		}
+		else if (type == "prime")
+		{
+			lPrime();
+			return "L\'";
+		}
+		else if (type == "2")
+		{
+			l();
+			l();
+			return "L2";
+		}
 	}
+	return "";
+}
+
+/**
+* Determine if the piece found at the given location is solved.
+*/
+bool Cube::isEdgeSolved(LOCATION l)
+{
+	// given sticker must match center piece
+	if (getCenter(l.face) != getSticker(l))
+		return false;
+
+	// get the adjacent edge sticker
+	std::pair<LOCATION, bool> adj = getAdjacentEdge(l);
+	if (!adj.second)
+		return false;
+
+	// solved if adjacent sticker is matches as well
+	return getCenter(adj.first.face) == getSticker(adj.first);
 }
 
 /**
@@ -360,7 +462,7 @@ void Cube::f()
 void Cube::fPrime()
 {
 	// turn the front face
-	setFace(FACE::FRONT, rotateRight(getFace(FACE::FRONT), 16));
+	setFace(FACE::FRONT, rotateLeft(getFace(FACE::FRONT), 16));
 
 	// turn the adjacent stickers on the up, right, bottom, and left faces 
 	uint64_t toSave = getFace(FACE::UP) & downMask;
@@ -680,6 +782,33 @@ char Cube::getColorChar(COLOR c)
 	default:
 		return ' ';
 	}
+}
+
+void Cube::printLocation(LOCATION loc)
+{
+	COLOR c = getSticker(loc);
+	switch (loc.face)
+	{
+	case FACE::UP:
+		std::cout << "up";
+		break;
+	case FACE::DOWN:
+		std::cout << "down";
+		break;
+	case FACE::FRONT:
+		std::cout << "front";
+		break;
+	case FACE::BACK:
+		std::cout << "back";
+		break;
+	case FACE::RIGHT:
+		std::cout << "right";
+		break;
+	case FACE::LEFT:
+		std::cout << "left";
+		break;
+	}
+	std::cout << " face, idx " << (int)loc.idx << " color " << getColorChar(c) << std::endl;
 }
 
 /**

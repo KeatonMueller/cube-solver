@@ -1,3 +1,6 @@
+#ifndef UTIL_H
+#define UTIL_H
+
 #include <stdint.h>
 #include <cmath>
 
@@ -12,3 +15,5 @@ uint64_t rotateRight(uint64_t source, uint64_t bits);
 * with wrap around.
 */
 uint64_t rotateLeft(uint64_t source, uint64_t bits);
+
+#endif
