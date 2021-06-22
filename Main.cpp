@@ -4,7 +4,6 @@ int main()
 {
 	Cube c;
 	c.print();
-	c.readMoves("FF'UU'DD'BB'RR'LL'");
+	c.readMoves("YY'");
 	c.print();
-
 }

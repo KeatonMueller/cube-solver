@@ -45,9 +45,112 @@ Cube::COLOR Cube::getCenter(FACE f)
 /**
 * Return the COLOR value of the requested sticker on the given face.
 */
-Cube::COLOR Cube::getSticker(FACE f, uint8_t idx)
+Cube::COLOR Cube::getSticker(LOCATION l)
 {
-	return (COLOR)(stickers[(uint8_t)f] >> ((7 - idx) * 8));
+	return (COLOR)(stickers[(uint8_t)l.face] >> ((7 - l.idx) * 8));
+}
+
+/**
+* Return the location of the sticker adjacent to the given location.
+*
+* If a non-edge location is supplied, the second return value is set
+* to false, otherwise it is true indicating a successful execution.
+*/
+std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION l)
+{
+	// fail if provided location isn't an edge
+	if ((getFace(l.face) & edgesMask) == 0)
+		return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+
+	switch (l.face)
+	{
+	case (FACE::UP):
+		switch (l.idx)
+		{
+		case 1:
+			return std::make_pair(LOCATION({ FACE::BACK, 1 }), true);
+		case 3:
+			return std::make_pair(LOCATION({ FACE::RIGHT, 1 }), true);
+		case 5:
+			return std::make_pair(LOCATION({ FACE::FRONT , 1 }), true);
+		case 7:
+			return std::make_pair(LOCATION({ FACE::LEFT, 1 }), true);
+		default:
+			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		}
+	case (FACE::DOWN):
+		switch (l.idx)
+		{
+		case 1:
+			return std::make_pair(LOCATION({ FACE::FRONT, 5 }), true);
+		case 3:
+			return std::make_pair(LOCATION({ FACE::RIGHT, 5 }), true);
+		case 5:
+			return std::make_pair(LOCATION({ FACE::BACK , 5 }), true);
+		case 7:
+			return std::make_pair(LOCATION({ FACE::LEFT, 5 }), true);
+		default:
+			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		}
+	case (FACE::FRONT):
+		switch (l.idx)
+		{
+		case 1:
+			return std::make_pair(LOCATION({ FACE::UP, 5 }), true);
+		case 3:
+			return std::make_pair(LOCATION({ FACE::RIGHT, 7 }), true);
+		case 5:
+			return std::make_pair(LOCATION({ FACE::DOWN , 1 }), true);
+		case 7:
+			return std::make_pair(LOCATION({ FACE::LEFT, 3 }), true);
+		default:
+			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		}
+	case (FACE::BACK):
+		switch (l.idx)
+		{
+		case 1:
+			return std::make_pair(LOCATION({ FACE::UP, 1 }), true);
+		case 3:
+			return std::make_pair(LOCATION({ FACE::LEFT, 7 }), true);
+		case 5:
+			return std::make_pair(LOCATION({ FACE::DOWN , 5 }), true);
+		case 7:
+			return std::make_pair(LOCATION({ FACE::RIGHT, 3 }), true);
+		default:
+			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		}
+	case (FACE::RIGHT):
+		switch (l.idx)
+		{
+		case 1:
+			return std::make_pair(LOCATION({ FACE::UP, 3 }), true);
+		case 3:
+			return std::make_pair(LOCATION({ FACE::BACK, 7 }), true);
+		case 5:
+			return std::make_pair(LOCATION({ FACE::DOWN , 3 }), true);
+		case 7:
+			return std::make_pair(LOCATION({ FACE::FRONT, 3 }), true);
+		default:
+			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		}
+	case (FACE::LEFT):
+		switch (l.idx)
+		{
+		case 1:
+			return std::make_pair(LOCATION({ FACE::UP, 7 }), true);
+		case 3:
+			return std::make_pair(LOCATION({ FACE::FRONT, 7 }), true);
+		case 5:
+			return std::make_pair(LOCATION({ FACE::DOWN , 7 }), true);
+		case 7:
+			return std::make_pair(LOCATION({ FACE::BACK, 3 }), true);
+		default:
+			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		}
+	default:
+		return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+	}
 }
 
 /**
@@ -85,12 +188,22 @@ void Cube::setFace(FACE f, uint64_t value)
 }
 
 /**
+* Set the given face's center to the given color.
+*/
+void Cube::setCenter(FACE f, COLOR c)
+{
+	uint8_t numBits = (7 - (uint64_t)f) * 8;
+	uint64_t centerMask = (uint64_t)0xff << numBits;
+	stickers[6] = (stickers[6] & ~centerMask) | ((uint64_t)c << numBits);
+}
+
+/**
 * Perform every move present in the string of moves.
 * No spaces are allowed in the input string.
 */
 void Cube::readMoves(const std::string& moves)
 {
-	int moveIdx = 0;
+	uint8_t moveIdx = 0;
 	while (moveIdx < moves.length())
 	{
 		if (moveIdx < moves.length() - 1 && (moves[moveIdx + 1] == '\'' || moves[moveIdx + 1] == '2'))
@@ -135,6 +248,30 @@ void Cube::readMove(const std::string& move)
 		l();
 	else if (move == "L\'")
 		lPrime();
+	else if (move == "M")
+		m();
+	else if (move == "M\'")
+		mPrime();
+	else if (move == "E")
+		e();
+	else if (move == "E\'")
+		ePrime();
+	else if (move == "S")
+		s();
+	else if (move == "S\'")
+		sPrime();
+	else if (move == "X")
+		x();
+	else if (move == "X\'")
+		xPrime();
+	else if (move == "Y")
+		y();
+	else if (move == "Y\'")
+		yPrime();
+	else if (move == "Z")
+		z();
+	else if (move == "Z\'")
+		zPrime();
 }
 
 /**
@@ -330,6 +467,198 @@ void Cube::lPrime()
 }
 
 /**
+* Perform a clockwise rotation of the M slice.
+*/
+void Cube::m()
+{
+	// rotate the centers
+	COLOR toSaveCenter = getCenter(FACE::UP);
+	setCenter(FACE::UP, getCenter(FACE::BACK));
+	setCenter(FACE::BACK, getCenter(FACE::DOWN));
+	setCenter(FACE::DOWN, getCenter(FACE::FRONT));
+	setCenter(FACE::FRONT, toSaveCenter);
+
+	// rotate the edge pieces
+	uint64_t toSaveEdges = getFace(FACE::UP) & middleColMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~middleColMask) | rotateRight(getFace(FACE::BACK) & middleColMask, 32));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~middleColMask) | rotateRight(getFace(FACE::DOWN) & middleColMask, 32));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~middleColMask) | (getFace(FACE::FRONT) & middleColMask));
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~middleColMask) | toSaveEdges);
+}
+
+/**
+* Perform a counter clockwise rotation of the M slice.
+*/
+void Cube::mPrime()
+{
+	// rotate the centers
+	COLOR toSaveCenter = getCenter(FACE::UP);
+	setCenter(FACE::UP, getCenter(FACE::FRONT));
+	setCenter(FACE::FRONT, getCenter(FACE::DOWN));
+	setCenter(FACE::DOWN, getCenter(FACE::BACK));
+	setCenter(FACE::BACK, toSaveCenter);
+
+	// rotate the edge pieces 
+	uint64_t toSaveEdges = getFace(FACE::UP) & middleColMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~middleColMask) | (getFace(FACE::FRONT) & middleColMask));
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~middleColMask) | (getFace(FACE::DOWN) & middleColMask));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~middleColMask) | rotateRight(getFace(FACE::BACK) & middleColMask, 32));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~middleColMask) | rotateRight(toSaveEdges, 32));
+}
+
+/**
+* Perform a clockwise rotation of the E slice.
+*/
+void Cube::e()
+{
+	// rotate the centers
+	COLOR toSaveCenter = getCenter(FACE::FRONT);
+	setCenter(FACE::FRONT, getCenter(FACE::LEFT));
+	setCenter(FACE::LEFT, getCenter(FACE::BACK));
+	setCenter(FACE::BACK, getCenter(FACE::RIGHT));
+	setCenter(FACE::RIGHT, toSaveCenter);
+
+	// rotate the edge pieces
+	uint64_t toSaveEdges = getFace(FACE::FRONT) & middleRowMask;
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~middleRowMask) | (getFace(FACE::LEFT) & middleRowMask));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~middleRowMask) | (getFace(FACE::BACK) & middleRowMask));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~middleRowMask) | (getFace(FACE::RIGHT) & middleRowMask));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~middleRowMask) | toSaveEdges);
+}
+
+/**
+* Perform a counter clockwise rotation of the E slice.
+*/
+void Cube::ePrime()
+{
+	// rotate the centers
+	COLOR toSaveCenter = getCenter(FACE::FRONT);
+	setCenter(FACE::FRONT, getCenter(FACE::RIGHT));
+	setCenter(FACE::RIGHT, getCenter(FACE::BACK));
+	setCenter(FACE::BACK, getCenter(FACE::LEFT));
+	setCenter(FACE::LEFT, toSaveCenter);
+
+	// rotate the edge pieces
+	uint64_t toSaveEdges = getFace(FACE::FRONT) & middleRowMask;
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~middleRowMask) | (getFace(FACE::RIGHT) & middleRowMask));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~middleRowMask) | (getFace(FACE::BACK) & middleRowMask));
+	setFace(FACE::BACK, (getFace(FACE::BACK) & ~middleRowMask) | (getFace(FACE::LEFT) & middleRowMask));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~middleRowMask) | toSaveEdges);
+}
+
+/**
+* Perform a clockwise rotation of the S slice.
+*/
+void Cube::s()
+{
+	// rotate the centers
+	COLOR toSaveCenter = getCenter(FACE::UP);
+	setCenter(FACE::UP, getCenter(FACE::LEFT));
+	setCenter(FACE::LEFT, getCenter(FACE::DOWN));
+	setCenter(FACE::DOWN, getCenter(FACE::RIGHT));
+	setCenter(FACE::RIGHT, toSaveCenter);
+
+	// rotate the edge pieces
+	uint64_t toSaveEdges = getFace(FACE::UP) & middleRowMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~middleRowMask) | ((getFace(FACE::LEFT) & middleColMask) >> 16));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~middleColMask) | rotateRight(getFace(FACE::DOWN) & middleRowMask, 16));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~middleRowMask) | ((getFace(FACE::RIGHT) & middleColMask) >> 16));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~middleColMask) | rotateRight(toSaveEdges, 16));
+}
+
+/**
+* Perform a counter clockwise rotation of the S slice.
+*/
+void Cube::sPrime()
+{
+	// rotate the centers
+	COLOR toSaveCenter = getCenter(FACE::UP);
+	setCenter(FACE::UP, getCenter(FACE::RIGHT));
+	setCenter(FACE::RIGHT, getCenter(FACE::DOWN));
+	setCenter(FACE::DOWN, getCenter(FACE::LEFT));
+	setCenter(FACE::LEFT, toSaveCenter);
+
+	// rotate the edge pieces
+	uint64_t toSaveEdges = getFace(FACE::UP) & middleRowMask;
+	setFace(FACE::UP, (getFace(FACE::UP) & ~middleRowMask) | rotateLeft(getFace(FACE::RIGHT) & middleColMask, 16));
+	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~middleColMask) | rotateLeft(getFace(FACE::DOWN) & middleRowMask, 16));
+	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~middleRowMask) | rotateLeft(getFace(FACE::LEFT) & middleColMask, 16));
+	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~middleColMask) | rotateLeft(toSaveEdges, 16));
+}
+
+/**
+* Perform a clockwise cube rotation on the X axis.
+* This is done in terms of outer turns and slice moves, so it's
+* less efficient.
+*/
+void Cube::x()
+{
+	r();
+	lPrime();
+	mPrime();
+}
+
+/**
+* Perform a counter clockwise cube rotation on the X axis.
+* This is done in terms of outer turns and slice moves, so it's
+* less efficient.
+*/
+void Cube::xPrime()
+{
+	rPrime();
+	l();
+	m();
+}
+
+/**
+* Perform a clockwise cube rotation on the Y axis.
+* This is done in terms of outer turns and slice moves, so it's
+* less efficient.
+*/
+void Cube::y()
+{
+	u();
+	dPrime();
+	ePrime();
+}
+
+/**
+* Perform a counter clockwise cube rotation on the Y axis.
+* This is done in terms of outer turns and slice moves, so it's
+* less efficient.
+*/
+void Cube::yPrime()
+{
+	uPrime();
+	d();
+	e();
+}
+
+/**
+* Perform a clockwise cube rotation on the Z axis.
+* This is done in terms of outer turns and slice moves, so it's
+* less efficient.
+*/
+void Cube::z()
+{
+	f();
+	bPrime();
+	s();
+}
+
+/**
+* Perform a counter clockwise cube rotation on the Z axis.
+* This is done in terms of outer turns and slice moves, so it's
+* less efficient.
+*/
+void Cube::zPrime()
+{
+	fPrime();
+	b();
+	sPrime();
+}
+
+/**
 * Get the single character value corresponding to each sticker color.
 */
 char Cube::getColorChar(COLOR c)
@@ -348,6 +677,8 @@ char Cube::getColorChar(COLOR c)
 		return 'B';
 	case COLOR::GREEN:
 		return 'G';
+	default:
+		return ' ';
 	}
 }
 
@@ -361,30 +692,30 @@ char Cube::getColorChar(COLOR c)
 void Cube::print()
 {
 	// print top face indented by 4 spaces
-	std::cout << "    " << getColorChar(getSticker(FACE::UP, 0)) << getColorChar(getSticker(FACE::UP, 1)) << getColorChar(getSticker(FACE::UP, 2)) << std::endl;
-	std::cout << "    " << getColorChar(getSticker(FACE::UP, 7)) << getColorChar(getCenter(FACE::UP)) << getColorChar(getSticker(FACE::UP, 3)) << std::endl;
-	std::cout << "    " << getColorChar(getSticker(FACE::UP, 6)) << getColorChar(getSticker(FACE::UP, 5)) << getColorChar(getSticker(FACE::UP, 4)) << std::endl;
+	std::cout << "    " << getColorChar(getSticker({ FACE::UP, 0 })) << getColorChar(getSticker({ FACE::UP, 1 })) << getColorChar(getSticker({ FACE::UP, 2 })) << std::endl;
+	std::cout << "    " << getColorChar(getSticker({ FACE::UP, 7 })) << getColorChar(getCenter(FACE::UP)) << getColorChar(getSticker({ FACE::UP, 3 })) << std::endl;
+	std::cout << "    " << getColorChar(getSticker({ FACE::UP, 6 })) << getColorChar(getSticker({ FACE::UP, 5 })) << getColorChar(getSticker({ FACE::UP, 4 })) << std::endl;
 
 	// print first row of left, front, right, and back faces, each separated by a space
-	std::cout << "\n" << getColorChar(getSticker(FACE::LEFT, 0)) << getColorChar(getSticker(FACE::LEFT, 1)) << getColorChar(getSticker(FACE::LEFT, 2));
-	std::cout << " " << getColorChar(getSticker(FACE::FRONT, 0)) << getColorChar(getSticker(FACE::FRONT, 1)) << getColorChar(getSticker(FACE::FRONT, 2));
-	std::cout << " " << getColorChar(getSticker(FACE::RIGHT, 0)) << getColorChar(getSticker(FACE::RIGHT, 1)) << getColorChar(getSticker(FACE::RIGHT, 2));
-	std::cout << " " << getColorChar(getSticker(FACE::BACK, 0)) << getColorChar(getSticker(FACE::BACK, 1)) << getColorChar(getSticker(FACE::BACK, 2)) << std::endl;
+	std::cout << "\n" << getColorChar(getSticker({ FACE::LEFT, 0 })) << getColorChar(getSticker({ FACE::LEFT, 1 })) << getColorChar(getSticker({ FACE::LEFT, 2 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::FRONT, 0 })) << getColorChar(getSticker({ FACE::FRONT, 1 })) << getColorChar(getSticker({ FACE::FRONT, 2 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::RIGHT, 0 })) << getColorChar(getSticker({ FACE::RIGHT, 1 })) << getColorChar(getSticker({ FACE::RIGHT, 2 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::BACK, 0 })) << getColorChar(getSticker({ FACE::BACK, 1 })) << getColorChar(getSticker({ FACE::BACK, 2 })) << std::endl;
 
 	// print second row of left, center, right, and back faces, each separated by a space
-	std::cout << getColorChar(getSticker(FACE::LEFT, 7)) << getColorChar(getCenter(FACE::LEFT)) << getColorChar(getSticker(FACE::LEFT, 3));
-	std::cout << " " << getColorChar(getSticker(FACE::FRONT, 7)) << getColorChar(getCenter(FACE::FRONT)) << getColorChar(getSticker(FACE::FRONT, 3));
-	std::cout << " " << getColorChar(getSticker(FACE::RIGHT, 7)) << getColorChar(getCenter(FACE::RIGHT)) << getColorChar(getSticker(FACE::RIGHT, 3));
-	std::cout << " " << getColorChar(getSticker(FACE::BACK, 7)) << getColorChar(getCenter(FACE::BACK)) << getColorChar(getSticker(FACE::BACK, 3)) << std::endl;
+	std::cout << getColorChar(getSticker({ FACE::LEFT, 7 })) << getColorChar(getCenter(FACE::LEFT)) << getColorChar(getSticker({ FACE::LEFT, 3 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::FRONT, 7 })) << getColorChar(getCenter(FACE::FRONT)) << getColorChar(getSticker({ FACE::FRONT, 3 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::RIGHT, 7 })) << getColorChar(getCenter(FACE::RIGHT)) << getColorChar(getSticker({ FACE::RIGHT, 3 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::BACK, 7 })) << getColorChar(getCenter(FACE::BACK)) << getColorChar(getSticker({ FACE::BACK, 3 })) << std::endl;
 
 	// print third row of left, center, right, and back faces, each separated by a space
-	std::cout << getColorChar(getSticker(FACE::LEFT, 6)) << getColorChar(getSticker(FACE::LEFT, 5)) << getColorChar(getSticker(FACE::LEFT, 4));
-	std::cout << " " << getColorChar(getSticker(FACE::FRONT, 6)) << getColorChar(getSticker(FACE::FRONT, 5)) << getColorChar(getSticker(FACE::FRONT, 4));
-	std::cout << " " << getColorChar(getSticker(FACE::RIGHT, 6)) << getColorChar(getSticker(FACE::RIGHT, 5)) << getColorChar(getSticker(FACE::RIGHT, 4));
-	std::cout << " " << getColorChar(getSticker(FACE::BACK, 6)) << getColorChar(getSticker(FACE::BACK, 5)) << getColorChar(getSticker(FACE::BACK, 4)) << "\n\n";
+	std::cout << getColorChar(getSticker({ FACE::LEFT, 6 })) << getColorChar(getSticker({ FACE::LEFT, 5 })) << getColorChar(getSticker({ FACE::LEFT, 4 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::FRONT, 6 })) << getColorChar(getSticker({ FACE::FRONT, 5 })) << getColorChar(getSticker({ FACE::FRONT, 4 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::RIGHT, 6 })) << getColorChar(getSticker({ FACE::RIGHT, 5 })) << getColorChar(getSticker({ FACE::RIGHT, 4 }));
+	std::cout << " " << getColorChar(getSticker({ FACE::BACK, 6 })) << getColorChar(getSticker({ FACE::BACK, 5 })) << getColorChar(getSticker({ FACE::BACK, 4 })) << "\n\n";
 
 	// print the down face indented by 4 spaces
-	std::cout << "    " << getColorChar(getSticker(FACE::DOWN, 0)) << getColorChar(getSticker(FACE::DOWN, 1)) << getColorChar(getSticker(FACE::DOWN, 2)) << std::endl;
-	std::cout << "    " << getColorChar(getSticker(FACE::DOWN, 7)) << getColorChar(getCenter(FACE::DOWN)) << getColorChar(getSticker(FACE::DOWN, 3)) << std::endl;
-	std::cout << "    " << getColorChar(getSticker(FACE::DOWN, 6)) << getColorChar(getSticker(FACE::DOWN, 5)) << getColorChar(getSticker(FACE::DOWN, 4)) << "\n\n";
+	std::cout << "    " << getColorChar(getSticker({ FACE::DOWN, 0 })) << getColorChar(getSticker({ FACE::DOWN, 1 })) << getColorChar(getSticker({ FACE::DOWN, 2 })) << std::endl;
+	std::cout << "    " << getColorChar(getSticker({ FACE::DOWN, 7 })) << getColorChar(getCenter(FACE::DOWN)) << getColorChar(getSticker({ FACE::DOWN, 3 })) << std::endl;
+	std::cout << "    " << getColorChar(getSticker({ FACE::DOWN, 6 })) << getColorChar(getSticker({ FACE::DOWN, 5 })) << getColorChar(getSticker({ FACE::DOWN, 4 })) << "\n\n";
 }
