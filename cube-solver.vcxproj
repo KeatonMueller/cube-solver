@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{d8ff5164-c52d-4779-8856-05c6ce48e6a3}</ProjectGuid>
-    <RootNamespace>cubesolver1</RootNamespace>
+    <RootNamespace>cubesolver</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>cube-solver</ProjectName>
   </PropertyGroup>
