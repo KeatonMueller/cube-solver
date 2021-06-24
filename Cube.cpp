@@ -25,6 +25,95 @@ Cube::Cube()
 	stickers[6] = centerStickers;
 }
 
+
+/**
+* Return the FACE value opposite the given face.
+*/
+Cube::FACE Cube::getOppositeFace(FACE face)
+{
+	switch (face)
+	{
+	case FACE::UP:
+		return FACE::DOWN;
+	case FACE::DOWN:
+		return FACE::UP;
+	case FACE::FRONT:
+		return FACE::BACK;
+	case FACE::BACK:
+		return FACE::FRONT;
+	case FACE::RIGHT:
+		return FACE::LEFT;
+	case FACE::LEFT:
+		return FACE::RIGHT;
+	}
+}
+
+/**
+* Return the FACE value adjacent to the given face in the given
+* direction.
+*/
+Cube::FACE Cube::getAdjacentFace(FACE face, const std::string& dir)
+{
+	switch (face)
+	{
+	case FACE::UP:
+		if (dir == "x")
+			return FACE::BACK;
+		else if (dir == "xPrime")
+			return FACE::FRONT;
+		else if (dir == "z")
+			return FACE::RIGHT;
+		else if (dir == "zPrime")
+			return FACE::LEFT;
+	case FACE::DOWN:
+		if (dir == "x")
+			return FACE::FRONT;
+		else if (dir == "xPrime")
+			return FACE::BACK;
+		else if (dir == "z")
+			return FACE::LEFT;
+		else if (dir == "zPrime")
+			return FACE::RIGHT;
+	case FACE::FRONT:
+		if (dir == "x")
+			return FACE::UP;
+		else if (dir == "xPrime")
+			return FACE::DOWN;
+		else if (dir == "y")
+			return FACE::LEFT;
+		else if (dir == "yPrime")
+			return FACE::RIGHT;
+	case FACE::BACK:
+		if (dir == "x")
+			return FACE::DOWN;
+		else if (dir == "xPrime")
+			return FACE::UP;
+		else if (dir == "y")
+			return FACE::RIGHT;
+		else if (dir == "yPrime")
+			return FACE::LEFT;
+	case FACE::RIGHT:
+		if (dir == "y")
+			return FACE::FRONT;
+		else if (dir == "yPrime")
+			return FACE::BACK;
+		else if (dir == "z")
+			return FACE::DOWN;
+		else if (dir == "zPrime")
+			return FACE::UP;
+	case FACE::LEFT:
+		if (dir == "y")
+			return FACE::BACK;
+		else if (dir == "yPrime")
+			return FACE::FRONT;
+		else if (dir == "z")
+			return FACE::UP;
+		else if (dir == "zPrime")
+			return FACE::DOWN;
+	}
+	return (FACE)0;
+}
+
 /**
 * Return a 64-bit integer containing the colors
 * of the stickers for the requested face.

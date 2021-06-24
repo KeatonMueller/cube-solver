@@ -66,6 +66,12 @@ public:
 
 	Cube();
 
+	/**
+	* Functions for getting faces relative to one another.
+	*/
+	FACE getOppositeFace(FACE face);
+	FACE getAdjacentFace(FACE face, const std::string& dir);
+
 	COLOR getCenter(FACE face);
 	COLOR getSticker(LOCATION loc);
 	std::pair<LOCATION, bool> getAdjacentEdge(LOCATION loc);

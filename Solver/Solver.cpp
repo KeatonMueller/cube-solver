@@ -27,6 +27,7 @@ void solve(Cube* cube)
 	COLOR color = COLOR::WHITE;
 	solveCross(cube, color);
 	solveCorners(cube, color);
+	solveSecondLayer(cube);
 	// solve OLL
 	// solve PLL
 }

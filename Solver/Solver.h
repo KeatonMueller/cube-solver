@@ -4,6 +4,7 @@
 #include "Cube.h"
 #include "SolverCross.h"
 #include "SolverCorners.h"
+#include "Solver2L.h"
 
 typedef Cube::LOCATION LOCATION;
 typedef Cube::COLOR COLOR;

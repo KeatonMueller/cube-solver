@@ -7,7 +7,7 @@ int main()
 {
 	Cube c;
 	c.print();
-	c.readMoves("BLBR'U'R'F'DL'D'BUURRBBFFU'BBUBBFFD'");
+	c.readMoves("ZZRU'R'U'F'UFUUURU'R'U'F'UF");
 	std::cout << "Scrambled cube:" << std::endl;
 	c.print();
 

@@ -151,21 +151,16 @@ LOCATION moveCornerOverCenter(Cube* cube, LOCATION piece)
 			piece.idx = (piece.idx + 2) % 8;
 			break;
 		}
-		moves += 1;
+		moves++;
 	}
 	// print instructions based on how many moves it took
 	if (moves == 1)
-	{
 		std::cout << "U ";
-	}
 	else if (moves == 2)
-	{
 		std::cout << "U2 ";
-	}
 	else if (moves == 3)
-	{
 		std::cout << "U\' ";
-	}
+
 	// return the piece location
 	return piece;
 }
