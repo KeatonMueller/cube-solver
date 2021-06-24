@@ -144,12 +144,14 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Solver.cpp" />
     <ClCompile Include="SolverCross.cpp" />
+    <ClCompile Include="SolverCorners.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Solver.h" />
     <ClInclude Include="SolverCross.h" />
+    <ClInclude Include="SolverCorners.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

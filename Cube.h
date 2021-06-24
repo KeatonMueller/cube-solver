@@ -69,9 +69,11 @@ public:
 	COLOR getCenter(FACE face);
 	COLOR getSticker(LOCATION loc);
 	std::pair<LOCATION, bool> getAdjacentEdge(LOCATION loc);
+	std::pair<LOCATION, LOCATION> getAdjacentCorner(LOCATION loc);
 
 	std::string move(FACE face, const std::string& type = "");
-	bool isEdgeSolved(LOCATION l);
+	bool isEdgeSolved(LOCATION loc);
+	bool isCornerSolved(LOCATION loc);
 
 	void printLocation(LOCATION loc);
 

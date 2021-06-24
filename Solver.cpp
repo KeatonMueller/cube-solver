@@ -20,12 +20,13 @@ LAYER getLayer(Cube* c, LOCATION l)
 }
 
 /**
-* Solve the given Rubik's Cube using the CFOP method.
+* Solve the given Rubik's Cube.
 */
 void solve(Cube* cube)
 {
-	solveCross(cube, COLOR::WHITE);
-	// solve F2L
+	COLOR color = COLOR::WHITE;
+	solveCross(cube, color);
+	solveCorners(cube, color);
 	// solve OLL
 	// solve PLL
 }

@@ -3,6 +3,7 @@
 
 #include "Cube.h"
 #include "SolverCross.h"
+#include "SolverCorners.h"
 
 typedef Cube::LOCATION LOCATION;
 typedef Cube::COLOR COLOR;

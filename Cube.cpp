@@ -153,6 +153,100 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION loc)
 	}
 }
 
+/**
+* Return the locations of the stickers adjacent to the given location.
+*
+* It is the responsibility of the caller to ensure that only a corner
+* piece location is supplied to this function.
+*
+* The order of the returned adjacent pieces always follows the following
+* order: UP, DOWN, FRONT, BACK, RIGHT, LEFT.
+*/
+std::pair<Cube::LOCATION, Cube::LOCATION> Cube::getAdjacentCorner(LOCATION loc)
+{
+	switch (loc.face)
+	{
+	case (FACE::UP):
+		switch (loc.idx)
+		{
+		case 0:
+			return std::make_pair(LOCATION({ FACE::BACK, 2 }), LOCATION({ FACE::LEFT, 0 }));
+		case 2:
+			return std::make_pair(LOCATION({ FACE::BACK, 0 }), LOCATION({ FACE::RIGHT, 2 }));
+		case 4:
+			return std::make_pair(LOCATION({ FACE::FRONT, 2 }), LOCATION({ FACE::RIGHT, 0 }));
+		case 6:
+			return std::make_pair(LOCATION({ FACE::FRONT, 0 }), LOCATION({ FACE::LEFT, 2 }));
+		}
+	case (FACE::DOWN):
+		switch (loc.idx)
+		{
+		case 0:
+			return std::make_pair(LOCATION({ FACE::FRONT, 6 }), LOCATION({ FACE::LEFT, 4 }));
+		case 2:
+			return std::make_pair(LOCATION({ FACE::FRONT, 4 }), LOCATION({ FACE::RIGHT, 6 }));
+		case 4:
+			return std::make_pair(LOCATION({ FACE::BACK, 6 }), LOCATION({ FACE::RIGHT, 4 }));
+		case 6:
+			return std::make_pair(LOCATION({ FACE::BACK, 4 }), LOCATION({ FACE::LEFT, 6 }));
+		}
+	case (FACE::FRONT):
+		switch (loc.idx)
+		{
+		case 0:
+			return std::make_pair(LOCATION({ FACE::UP, 6 }), LOCATION({ FACE::LEFT, 2 }));
+		case 2:
+			return std::make_pair(LOCATION({ FACE::UP, 4 }), LOCATION({ FACE::RIGHT, 0 }));
+		case 4:
+			return std::make_pair(LOCATION({ FACE::DOWN, 2 }), LOCATION({ FACE::RIGHT, 6 }));
+		case 6:
+			return std::make_pair(LOCATION({ FACE::DOWN, 0 }), LOCATION({ FACE::LEFT, 4 }));
+		}
+	case (FACE::BACK):
+		switch (loc.idx)
+		{
+		case 0:
+			return std::make_pair(LOCATION({ FACE::UP, 2 }), LOCATION({ FACE::RIGHT, 2 }));
+		case 2:
+			return std::make_pair(LOCATION({ FACE::UP, 0 }), LOCATION({ FACE::LEFT, 0 }));
+		case 4:
+			return std::make_pair(LOCATION({ FACE::DOWN, 6 }), LOCATION({ FACE::LEFT, 6 }));
+		case 6:
+			return std::make_pair(LOCATION({ FACE::DOWN, 4 }), LOCATION({ FACE::RIGHT, 4 }));
+		}
+	case (FACE::RIGHT):
+		switch (loc.idx)
+		{
+		case 0:
+			return std::make_pair(LOCATION({ FACE::UP, 4 }), LOCATION({ FACE::FRONT, 2 }));
+		case 2:
+			return std::make_pair(LOCATION({ FACE::UP, 2 }), LOCATION({ FACE::BACK, 0 }));
+		case 4:
+			return std::make_pair(LOCATION({ FACE::DOWN, 4 }), LOCATION({ FACE::BACK, 6 }));
+		case 6:
+			return std::make_pair(LOCATION({ FACE::DOWN, 2 }), LOCATION({ FACE::FRONT, 4 }));
+		}
+	case (FACE::LEFT):
+		switch (loc.idx)
+		{
+		case 0:
+			return std::make_pair(LOCATION({ FACE::UP, 0 }), LOCATION({ FACE::BACK, 2 }));
+		case 2:
+			return std::make_pair(LOCATION({ FACE::UP, 6 }), LOCATION({ FACE::FRONT, 0 }));
+		case 4:
+			return std::make_pair(LOCATION({ FACE::DOWN, 0 }), LOCATION({ FACE::FRONT, 6 }));
+		case 6:
+			return std::make_pair(LOCATION({ FACE::DOWN, 6 }), LOCATION({ FACE::BACK, 4 }));
+		}
+	}
+	return std::make_pair(LOCATION({ (FACE)0, 0 }), LOCATION({ (FACE)0, 0 }));
+}
+
+/**
+* Perform a move of the given type on the requested face.
+*
+* Return a string corresponding to the move performed.
+*/
 std::string Cube::move(FACE face, const std::string& type)
 {
 	switch (face)
@@ -264,21 +358,37 @@ std::string Cube::move(FACE face, const std::string& type)
 }
 
 /**
-* Determine if the piece found at the given location is solved.
+* Determine if the edge piece found at the given location is solved.
 */
-bool Cube::isEdgeSolved(LOCATION l)
+bool Cube::isEdgeSolved(LOCATION loc)
 {
 	// given sticker must match center piece
-	if (getCenter(l.face) != getSticker(l))
+	if (getCenter(loc.face) != getSticker(loc))
 		return false;
 
 	// get the adjacent edge sticker
-	std::pair<LOCATION, bool> adj = getAdjacentEdge(l);
+	std::pair<LOCATION, bool> adj = getAdjacentEdge(loc);
 	if (!adj.second)
 		return false;
 
 	// solved if adjacent sticker is matches as well
 	return getCenter(adj.first.face) == getSticker(adj.first);
+}
+
+/**
+* Determine if the corner piece found at the given location is solved.
+*/
+bool Cube::isCornerSolved(LOCATION loc)
+{
+	// given sticker must match center piece
+	if (getCenter(loc.face) != getSticker(loc))
+		return false;
+
+	// so must the two adjacent stickers
+	std::pair<LOCATION, LOCATION> adj = getAdjacentCorner(loc);
+	if (getCenter(adj.first.face) != getSticker(adj.first))
+		return false;
+	return getCenter(adj.second.face) == getSticker(adj.second);
 }
 
 /**
