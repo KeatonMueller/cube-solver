@@ -246,6 +246,51 @@ void solveOCLL67(Cube* cube, COLOR topColor, uint8_t shifts)
 }
 
 /**
+* Solve OLL cases OCLL1 and OCLL2
+*/
+void solveOCLL12(Cube* cube, COLOR topColor)
+{
+	// determine if it's case 1 or 2
+	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, true);
+	FACE face = FACE::FRONT;
+	// find the face with headlights
+	while (true)
+	{
+		if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+			break;
+		face = cube->getAdjacentFace(face, "y");
+	}
+	// check if opposite face also has headlights
+	FACE oppFace = cube->getOppositeFace(face);
+	// OCLL1
+	if ((cube->getFace(oppFace) & rowMask.first) == rowMask.second)
+	{
+		// adjust up face
+		if (face == FACE::RIGHT || face == FACE::LEFT)
+			std::cout << cube->move(FACE::UP) << " ";
+
+		// perform OLL: (R U2 R') (U' R U R') (U' R U' R')
+		cube->readMoves("(R U2 R') (U' R U R') (U' R U' R')");
+		std::cout << "(R U2 R') (U' R U R') (U' R U' R')";
+	}
+	// OCLL2
+	else
+	{
+		// adjust up face
+		if (face == FACE::BACK)
+			std::cout << cube->move(FACE::UP, "prime") << " ";
+		else if (face == FACE::RIGHT)
+			std::cout << cube->move(FACE::UP, "2") << " ";
+		else if (face == FACE::FRONT)
+			std::cout << cube->move(FACE::UP) << " ";
+
+		// perform OLL: R U2 R2 U' R2 U' R2 U2 R
+		cube->readMoves("R U2 R2 U' R2 U' R2 U2 R");
+		std::cout << "R U2 R2 U' R2 U' R2 U2 R";
+	}
+}
+
+/**
 * Orient the last layer on the given cube.
 *
 * Assumes the first two layers are solved and that
@@ -271,6 +316,8 @@ void solveOLL(Cube* cube)
 		solveE2(cube, ollType.second);
 	else if (ollType.first == olls[4])
 		solveOCLL67(cube, topColor, ollType.second);
+	else if (ollType.first == olls[5])
+		solveOCLL12(cube, topColor);
 
 	std::cout << "\n\n";
 }
