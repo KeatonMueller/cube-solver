@@ -5,13 +5,21 @@
 
 Cube::Cube()
 {
+	reset();
+}
+
+/**
+* Reset the cube to the solved state.
+*/
+void Cube::reset()
+{
 	// fill in the sticker colors for the cube
 	uint64_t centerStickers = 0;
 	// i is iterating over the FACE and COLOR enum simultaneously
 	for (uint64_t i = 0; i < 6; i++)
 	{
 		// separated out for clarity
-		COLOR color = (COLOR)i;
+		COLOR color = (COLOR)(i + 1);
 		FACE face = (FACE)i;
 		// int containing all 8 sticker colors
 		uint64_t faceStickers = 0;
@@ -25,6 +33,25 @@ Cube::Cube()
 	stickers[6] = centerStickers;
 }
 
+/**
+* Check if the cube state is solved.
+*/
+bool Cube::isSolved()
+{
+	// for every face
+	for (uint8_t faceIdx = 0; faceIdx < 6; faceIdx++)
+	{
+		// find the center color
+		COLOR centerColor = getCenter((FACE)faceIdx);
+		// ensure all other stickers match the center color
+		for (uint8_t stickerIdx = 0; stickerIdx < 8; stickerIdx++)
+		{
+			if (getSticker({ (FACE)faceIdx, stickerIdx }) != centerColor)
+				return false;
+		}
+	}
+	return true;
+}
 
 /**
 * Return the FACE value opposite the given face.
@@ -46,6 +73,7 @@ Cube::FACE Cube::getOppositeFace(FACE face)
 	case FACE::LEFT:
 		return FACE::RIGHT;
 	}
+	return (FACE)0;
 }
 
 /**
@@ -112,6 +140,17 @@ Cube::FACE Cube::getAdjacentFace(FACE face, const std::string& dir)
 			return FACE::DOWN;
 	}
 	return (FACE)0;
+}
+
+/**
+* Return the FACE value adjacent to the given face in the given
+* direction, with the given number of rotations.
+*/
+Cube::FACE Cube::getRelativeFace(FACE face, const std::string& dir, uint8_t numRotations)
+{
+	for (uint8_t i = 0; i < numRotations; i++)
+		face = getAdjacentFace(face, dir);
+	return face;
 }
 
 /**
@@ -522,6 +561,9 @@ void Cube::readMoves(const std::string& moves)
 
 /**
 * Perform the single move represented by the given string.
+*
+* The move may be clockwise 90 degrees, counter clockwise 90 degrees,
+* or a 180 degree turn.
 */
 void Cube::readMove(const std::string& move)
 {
@@ -529,50 +571,164 @@ void Cube::readMove(const std::string& move)
 		u();
 	else if (move == "U\'")
 		uPrime();
+	else if (move == "U2")
+	{
+		u();
+		u();
+	}
+	else if (move == "u")
+		uWide();
+	else if (move == "u\'")
+		uPrimeWide();
+	else if (move == "u2")
+	{
+		uWide();
+		uWide();
+	}
 	else if (move == "D")
 		d();
 	else if (move == "D\'")
 		dPrime();
+	else if (move == "D2")
+	{
+		d();
+		d();
+	}
+	else if (move == "d")
+		dWide();
+	else if (move == "d\'")
+		dPrimeWide();
+	else if (move == "d2")
+	{
+		dWide();
+		dWide();
+	}
 	else if (move == "F")
 		f();
 	else if (move == "F\'")
 		fPrime();
+	else if (move == "F2")
+	{
+		f();
+		f();
+	}
+	else if (move == "f")
+		fWide();
+	else if (move == "f\'")
+		fPrimeWide();
+	else if (move == "f2")
+	{
+		fWide();
+		fWide();
+	}
 	else if (move == "B")
 		b();
 	else if (move == "B\'")
 		bPrime();
+	else if (move == "B2")
+	{
+		b();
+		b();
+	}
+	else if (move == "b")
+		bWide();
+	else if (move == "b\'")
+		bPrimeWide();
+	else if (move == "b2")
+	{
+		bWide();
+		bWide();
+	}
 	else if (move == "R")
 		r();
 	else if (move == "R\'")
 		rPrime();
+	else if (move == "R2")
+	{
+		r();
+		r();
+	}
+	else if (move == "r")
+		rWide();
+	else if (move == "r\'")
+		rPrimeWide();
+	else if (move == "r2")
+	{
+		rWide();
+		rWide();
+	}
 	else if (move == "L")
 		l();
 	else if (move == "L\'")
 		lPrime();
+	else if (move == "L2")
+	{
+		l();
+		l();
+	}
+	else if (move == "l")
+		lWide();
+	else if (move == "l\'")
+		lPrimeWide();
+	else if (move == "l2")
+	{
+		lWide();
+		lWide();
+	}
 	else if (move == "M")
 		m();
 	else if (move == "M\'")
 		mPrime();
+	else if (move == "M2")
+	{
+		m();
+		m();
+	}
 	else if (move == "E")
 		e();
 	else if (move == "E\'")
 		ePrime();
+	else if (move == "E2")
+	{
+		e();
+		e();
+	}
 	else if (move == "S")
 		s();
 	else if (move == "S\'")
 		sPrime();
-	else if (move == "X")
+	else if (move == "S2")
+	{
+		s();
+		s();
+	}
+	else if (move == "X" || move == "x")
 		x();
-	else if (move == "X\'")
+	else if (move == "X\'" || move == "x\'")
 		xPrime();
-	else if (move == "Y")
+	else if (move == "X2" || move == "x2")
+	{
+		x();
+		x();
+	}
+	else if (move == "Y" || move == "y")
 		y();
-	else if (move == "Y\'")
+	else if (move == "Y\'" || move == "y\'")
 		yPrime();
-	else if (move == "Z")
+	else if (move == "Y2" || move == "y2")
+	{
+		y();
+		y();
+	}
+	else if (move == "Z" || move == "z")
 		z();
-	else if (move == "Z\'")
+	else if (move == "Z\'" || move == "z\'")
 		zPrime();
+	else if (move == "Z2" || move == "z2")
+	{
+		z();
+		z();
+	}
 }
 
 /**
@@ -608,6 +764,24 @@ void Cube::uPrime()
 }
 
 /**
+* Perform a clockwise wide U.
+*/
+void Cube::uWide()
+{
+	u();
+	ePrime();
+}
+
+/**
+* Perform a counter clockwise wide U.
+*/
+void Cube::uPrimeWide()
+{
+	uPrime();
+	e();
+}
+
+/**
 * Perform a clockwise rotation of the down face.
 */
 void Cube::d()
@@ -637,6 +811,24 @@ void Cube::dPrime()
 	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~downMask) | (getFace(FACE::BACK) & downMask));
 	setFace(FACE::BACK, (getFace(FACE::BACK) & ~downMask) | (getFace(FACE::LEFT) & downMask));
 	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~downMask) | toSave);
+}
+
+/**
+* Perform a clockwise wide D.
+*/
+void Cube::dWide()
+{
+	d();
+	e();
+}
+
+/**
+* Perform a counter clockwise wide D.
+*/
+void Cube::dPrimeWide()
+{
+	dPrime();
+	ePrime();
 }
 
 /**
@@ -672,6 +864,24 @@ void Cube::fPrime()
 }
 
 /**
+* Perform a clockwise wide F.
+*/
+void Cube::fWide()
+{
+	f();
+	s();
+}
+
+/**
+* Perform a counter clockwise wide F.
+*/
+void Cube::fPrimeWide()
+{
+	fPrime();
+	sPrime();
+}
+
+/**
 * Perform a clockwise rotation of the back face.
 */
 void Cube::b()
@@ -701,6 +911,24 @@ void Cube::bPrime()
 	setFace(FACE::LEFT, (getFace(FACE::LEFT) & ~leftMask) | rotateRight(getFace(FACE::DOWN) & downMask, 16));
 	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~downMask) | ((getFace(FACE::RIGHT) & rightMask) >> 16));
 	setFace(FACE::RIGHT, (getFace(FACE::RIGHT) & ~rightMask) | (toSave >> 16));
+}
+
+/**
+* Perform a clockwise wide B.
+*/
+void Cube::bWide()
+{
+	b();
+	sPrime();
+}
+
+/**
+* Perform a counter clockwise wide B.
+*/
+void Cube::bPrimeWide()
+{
+	bPrime();
+	s();
 }
 
 /**
@@ -736,6 +964,24 @@ void Cube::rPrime()
 }
 
 /**
+* Perform a clockwise wide R.
+*/
+void Cube::rWide()
+{
+	r();
+	mPrime();
+}
+
+/**
+* Perform a counter clockwise wide R.
+*/
+void Cube::rPrimeWide()
+{
+	rPrime();
+	m();
+}
+
+/**
 * Perform a clockwise rotation of the left face.
 */
 void Cube::l()
@@ -765,6 +1011,24 @@ void Cube::lPrime()
 	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~leftMask) | getFace(FACE::DOWN) & leftMask);
 	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~leftMask) | rotateRight(getFace(FACE::BACK) & rightMask, 32));
 	setFace(FACE::BACK, (getFace(FACE::BACK) & ~rightMask) | rotateRight(toSave, 32));
+}
+
+/**
+* Perform a clockwise wide L.
+*/
+void Cube::lWide()
+{
+	l();
+	m();
+}
+
+/**
+* Perform a counter clockwise wide L.
+*/
+void Cube::lPrimeWide()
+{
+	lPrime();
+	mPrime();
 }
 
 /**

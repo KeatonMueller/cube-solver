@@ -34,6 +34,11 @@ std::pair<LOCATION, bool> findUnsolved2LEdge(Cube* cube, COLOR color)
 	return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
 }
 
+/**
+* Bring the given edge piece into the top layer without
+* disturbing the first layer or any solved second layer
+* edges.
+*/
 LOCATION bring2LEdgeToTopLayer(Cube* cube, LOCATION piece)
 {
 	// find which layer it currently is
@@ -70,6 +75,10 @@ LOCATION bring2LEdgeToTopLayer(Cube* cube, LOCATION piece)
 	return piece;
 }
 
+/**
+* Align the outward facing sticker on the edge piece with
+* its corresponding center.
+*/
 LOCATION align2LEdge(Cube* cube, LOCATION piece)
 {
 	// ensure we're working with the outer edge
@@ -96,6 +105,11 @@ LOCATION align2LEdge(Cube* cube, LOCATION piece)
 	return piece;
 }
 
+/**
+* Insert the second layer edge into the proper position.
+*
+* Assumes the given location is in the top layer.
+*/
 void insert2LEdge(Cube* cube, LOCATION piece)
 {
 	// get both stickers
@@ -132,6 +146,9 @@ void insert2LEdge(Cube* cube, LOCATION piece)
 	}
 }
 
+/**
+* Solve the given second layer edge
+*/
 void solveSecondLayerEdge(Cube* cube, LOCATION piece)
 {
 	if (cube->isEdgeSolved(piece))
