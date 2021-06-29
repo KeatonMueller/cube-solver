@@ -174,6 +174,78 @@ void solveOCLL5(Cube* cube, COLOR topColor, uint8_t shifts)
 }
 
 /**
+* Solve OLL case E1
+*/
+void solveE1(Cube* cube, uint8_t shifts)
+{
+	// adjust up face
+	if (shifts == 1)
+		std::cout << cube->move(FACE::UP, "prime") << " ";
+	else if (shifts == 2)
+		std::cout << cube->move(FACE::UP, "2") << " ";
+	else if (shifts == 3)
+		std::cout << cube->move(FACE::UP) << " ";
+
+	// perform OLL: (r U R' U') M (U R U' R')
+	cube->readMoves("(r U R' U') M (U R U' R')");
+	std::cout << "(r U R' U') M (U R U' R')";
+}
+
+/**
+* Solve OLL case E2
+*/
+void solveE2(Cube* cube, uint8_t shifts)
+{
+	// adjust up face
+	if (shifts == 1)
+		std::cout << cube->move(FACE::UP) << " ";
+
+	// perform OLL: (R U R' U') M' (U R U' r')
+	cube->readMoves("(R U R' U') M' (U R U' r')");
+	std::cout << "(R U R' U') M' (U R U' r')";
+}
+
+/**
+* Solve OLL cases OCLL6 and OCLL7
+*/
+void solveOCLL67(Cube* cube, COLOR topColor, uint8_t shifts)
+{
+	// determine if it's case 6 or 7
+	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, false);
+	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
+	// OCLL6
+	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	{
+		// adjust up face
+		if (shifts == 0)
+			std::cout << cube->move(FACE::UP) << " ";
+		else if (shifts == 2)
+			std::cout << cube->move(FACE::UP, "prime") << " ";
+		else if (shifts == 3)
+			std::cout << cube->move(FACE::UP, "2") << " ";
+
+		// perform OLL: R U2 R' U' R U' R'
+		cube->readMoves("R U2 R' U' R U' R'");
+		std::cout << "R U2 R' U' R U' R'";
+	}
+	// OCLL7
+	else
+	{
+		// adjust up face
+		if (shifts == 0)
+			std::cout << cube->move(FACE::UP, "prime") << " ";
+		else if (shifts == 1)
+			std::cout << cube->move(FACE::UP, "2") << " ";
+		else if (shifts == 2)
+			std::cout << cube->move(FACE::UP) << " ";
+
+		// perform OLL: R U R' U R U2 R'
+		cube->readMoves("R U R' U R U2 R'");
+		std::cout << "R U R' U R U2 R'";
+	}
+}
+
+/**
 * Orient the last layer on the given cube.
 *
 * Assumes the first two layers are solved and that
@@ -193,6 +265,12 @@ void solveOLL(Cube* cube)
 		solveOCLL34(cube, topColor, ollType.second);
 	else if (ollType.first == olls[1])
 		solveOCLL5(cube, topColor, ollType.second);
+	else if (ollType.first == olls[2])
+		solveE1(cube, ollType.second);
+	else if (ollType.first == olls[3])
+		solveE2(cube, ollType.second);
+	else if (ollType.first == olls[4])
+		solveOCLL67(cube, topColor, ollType.second);
 
 	std::cout << "\n\n";
 }
