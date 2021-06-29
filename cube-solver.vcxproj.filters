@@ -36,6 +36,9 @@
     <ClCompile Include="Solver\Solver2L.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Solver\SolverOLL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Solver\Solver2L.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Solver\SolverOLL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

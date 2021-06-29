@@ -28,6 +28,6 @@ void solve(Cube* cube)
 	solveCross(cube, color);
 	solveCorners(cube, color);
 	solveSecondLayer(cube);
-	// solve OLL
+	solveOLL(cube);
 	// solve PLL
 }
