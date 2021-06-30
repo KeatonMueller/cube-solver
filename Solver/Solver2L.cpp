@@ -26,7 +26,7 @@ std::pair<LOCATION, bool> findUnsolved2LEdge(Cube* cube, COLOR color)
 			// piece must not have provided color, and it must be unsolved
 			if (cube->getSticker({ (FACE)face, idx }) != color
 				&& cube->getSticker(cube->getAdjacentEdge({ (FACE)face, idx }).first) != color
-				&& !cube->isEdgeSolved({ (FACE)face, idx }))
+				&& !cube->isPieceSolved({ (FACE)face, idx }))
 				return std::make_pair(LOCATION({ (FACE)face, idx }), true);
 		}
 	}
@@ -151,7 +151,7 @@ void insert2LEdge(Cube* cube, LOCATION piece)
 */
 void solveSecondLayerEdge(Cube* cube, LOCATION piece)
 {
-	if (cube->isEdgeSolved(piece))
+	if (cube->isPieceSolved(piece))
 		return;
 
 	piece = bring2LEdgeToTopLayer(cube, piece);

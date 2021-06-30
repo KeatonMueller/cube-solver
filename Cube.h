@@ -89,8 +89,7 @@ public:
 	std::pair<LOCATION, LOCATION> getAdjacentCorner(LOCATION loc);
 
 	std::string move(FACE face, const std::string& type = "");
-	bool isEdgeSolved(LOCATION loc);
-	bool isCornerSolved(LOCATION loc);
+	bool isPieceSolved(LOCATION loc);
 
 	void printLocation(LOCATION loc);
 
@@ -199,6 +198,12 @@ private:
 	* Helper functions for selecting specific stickers
 	*/
 	char getColorChar(COLOR c);
+
+	/**
+	* Determine if specific piece types are solved.
+	*/
+	bool isEdgeSolved(LOCATION loc);
+	bool isCornerSolved(LOCATION loc);
 
 	/**
 	* Helper functions for updating the cube's values

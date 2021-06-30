@@ -29,5 +29,5 @@ void solve(Cube* cube)
 	solveCorners(cube, color);
 	solveSecondLayer(cube);
 	solveOLL(cube);
-	// solve PLL
+	solvePLL(cube);
 }

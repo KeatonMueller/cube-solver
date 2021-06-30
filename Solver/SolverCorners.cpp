@@ -16,7 +16,7 @@ std::pair<LOCATION, bool> findUnsolvedCorner(Cube* cube, COLOR color)
 			// skip odd indices - they are edge pieces
 			if (idx % 2 == 1)
 				continue;
-			if (cube->getSticker({ (FACE)face, idx }) == color && !cube->isCornerSolved({ (FACE)face, idx }))
+			if (cube->getSticker({ (FACE)face, idx }) == color && !cube->isPieceSolved({ (FACE)face, idx }))
 				return std::make_pair(LOCATION({ (FACE)face, idx }), true);
 		}
 	}
@@ -210,7 +210,7 @@ void insertCorner(Cube* cube, LOCATION piece)
 
 void solveCorner(Cube* cube, LOCATION piece)
 {
-	if (cube->isCornerSolved(piece))
+	if (cube->isPieceSolved(piece))
 		return;
 
 	piece = bringCornerToTop(cube, piece);

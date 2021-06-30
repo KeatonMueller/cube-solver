@@ -16,7 +16,7 @@ std::pair<LOCATION, bool> findUnsolvedCrossEdge(Cube* cube, COLOR color)
 			// skip even indices - they are corner pieces
 			if (idx % 2 == 0)
 				continue;
-			if (cube->getSticker({ (FACE)face, idx }) == color && !cube->isEdgeSolved({ (FACE)face, idx }))
+			if (cube->getSticker({ (FACE)face, idx }) == color && !cube->isPieceSolved({ (FACE)face, idx }))
 				return std::make_pair(LOCATION({ (FACE)face, idx }), true);
 		}
 	}
@@ -202,7 +202,7 @@ void insertCrossEdge(Cube* cube, LOCATION piece)
 */
 void solveCrossPiece(Cube* cube, LOCATION piece)
 {
-	if (cube->isEdgeSolved(piece))
+	if (cube->isPieceSolved(piece))
 		return;
 
 	piece = bringEdgeToTopLayer(cube, piece);

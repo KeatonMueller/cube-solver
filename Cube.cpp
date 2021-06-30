@@ -486,6 +486,16 @@ std::string Cube::move(FACE face, const std::string& type)
 }
 
 /**
+* Determine if the piece at the given location is solved.
+*/
+bool Cube::isPieceSolved(LOCATION loc)
+{
+	if (loc.idx % 2 == 0)
+		return isCornerSolved(loc);
+	return isEdgeSolved(loc);
+}
+
+/**
 * Determine if the edge piece found at the given location is solved.
 */
 bool Cube::isEdgeSolved(LOCATION loc)

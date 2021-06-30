@@ -1,5 +1,5 @@
-#ifndef SOLVER_OLL_H
-#define SOLVER_OLL_H
+#ifndef SOLVER_PLL_H
+#define SOLVER_PLL_H
 
 #include "Solver.h"
 
@@ -8,8 +8,8 @@ typedef Cube::COLOR COLOR;
 typedef Cube::FACE FACE;
 
 /**
-* Orient the last layer on the given cube.
+* Permute the last layer on the given cube.
 */
-void solveOLL(Cube* cube);
+void solvePLL(Cube* cube);
 
 #endif

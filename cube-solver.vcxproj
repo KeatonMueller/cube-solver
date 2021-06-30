@@ -151,6 +151,7 @@
     <ClCompile Include="Solver\SolverCross.cpp" />
     <ClCompile Include="Solver\SolverCorners.cpp" />
     <ClCompile Include="Solver\SolverOLL.cpp" />
+    <ClCompile Include="Solver\SolverPLL.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="Solver\SolverCross.h" />
     <ClInclude Include="Solver\SolverCorners.h" />
     <ClInclude Include="Solver\SolverOLL.h" />
+    <ClInclude Include="Solver\SolverPLL.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
