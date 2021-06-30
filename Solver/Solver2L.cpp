@@ -130,7 +130,7 @@ void insert2LEdge(Cube* cube, LOCATION piece)
 		std::cout << cube->move(FACE::UP, "prime") << " ";
 		std::cout << cube->move(sidePiece.face, "prime") << " ";
 		std::cout << cube->move(FACE::UP) << " ";
-		std::cout << cube->move(sidePiece.face) << " ";
+		std::cout << cube->move(sidePiece.face) << "\n";
 	}
 	// insert to the left
 	else if (cube->getCenter(leftFace) == cube->getSticker(topPiece))
@@ -142,7 +142,7 @@ void insert2LEdge(Cube* cube, LOCATION piece)
 		std::cout << cube->move(FACE::UP) << " ";
 		std::cout << cube->move(sidePiece.face) << " ";
 		std::cout << cube->move(FACE::UP, "prime") << " ";
-		std::cout << cube->move(sidePiece.face, "prime") << " ";
+		std::cout << cube->move(sidePiece.face, "prime") << "\n";
 	}
 }
 
