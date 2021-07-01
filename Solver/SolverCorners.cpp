@@ -27,7 +27,7 @@ std::pair<LOCATION, bool> findUnsolvedCorner(Cube* cube, COLOR color)
 * Bring the given corner piece into the top layer while
 * not disturbing the cross or any other corners.
 */
-LOCATION bringCornerToTop(Cube* cube, LOCATION piece)
+LOCATION bringCornerToTop(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// find which layer it currently is
 	LAYER layer = getLayer(cube, piece);
@@ -45,11 +45,11 @@ LOCATION bringCornerToTop(Cube* cube, LOCATION piece)
 			LOCATION adj = adjs.first.idx == 6 ? adjs.first : adjs.second;
 
 			// turn the adjacent face clockwise
-			std::cout << cube->move(adj.face) << " ";
+			solution.push_back(cube->move(adj.face));
 			// turn up face counter clockwise
-			std::cout << cube->move(FACE::UP, "prime") << " ";
+			solution.push_back(cube->move(FACE::UP, "prime"));
 			// turn the adjacent face counter clockwise
-			std::cout << cube->move(adj.face, "prime") << " ";
+			solution.push_back(cube->move(adj.face, "prime"));
 			// update new location
 			piece.face = adj.face;
 			piece.idx = 0;
@@ -60,11 +60,11 @@ LOCATION bringCornerToTop(Cube* cube, LOCATION piece)
 			if (piece.idx == 4)
 			{
 				// turn face counter clockwise
-				std::cout << cube->move(piece.face, "prime") << " ";
+				solution.push_back(cube->move(piece.face, "prime"));
 				// turn up face counter clockwise
-				std::cout << cube->move(FACE::UP, "prime") << " ";
+				solution.push_back(cube->move(FACE::UP, "prime"));
 				// turn face clockwise
-				std::cout << cube->move(piece.face) << " ";
+				solution.push_back(cube->move(piece.face));
 				// find piece's new location
 				std::pair<LOCATION, LOCATION> adj = cube->getAdjacentCorner(piece);
 				piece.face = adj.second.face;
@@ -73,11 +73,11 @@ LOCATION bringCornerToTop(Cube* cube, LOCATION piece)
 			else if (piece.idx == 6)
 			{
 				// turn face clockwise
-				std::cout << cube->move(piece.face) << " ";
+				solution.push_back(cube->move(piece.face));
 				// turn up face clockwise
-				std::cout << cube->move(FACE::UP) << " ";
+				solution.push_back(cube->move(FACE::UP));
 				// turn face counter clockwise
-				std::cout << cube->move(piece.face, "prime") << " ";
+				solution.push_back(cube->move(piece.face, "prime"));
 				// find piece's new location
 				std::pair<LOCATION, LOCATION> adj = cube->getAdjacentCorner(piece);
 				piece.face = adj.second.face;
@@ -127,7 +127,7 @@ bool isCornerLocatedOverCenter(Cube* cube, LOCATION piece)
 * Assumes that the given location is a corner piece in the top
 * layer.
 */
-LOCATION moveCornerOverCenter(Cube* cube, LOCATION piece)
+LOCATION moveCornerOverCenter(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	uint8_t moves = 0;
 	while (!isCornerLocatedOverCenter(cube, piece))
@@ -155,17 +155,17 @@ LOCATION moveCornerOverCenter(Cube* cube, LOCATION piece)
 	}
 	// print instructions based on how many moves it took
 	if (moves == 1)
-		std::cout << "U ";
+		solution.push_back(Move(Move::PIECES::UP, Move::TYPE::NORMAL));
 	else if (moves == 2)
-		std::cout << "U2 ";
+		solution.push_back(Move(Move::PIECES::UP, Move::TYPE::DOUBLE));
 	else if (moves == 3)
-		std::cout << "U\' ";
+		solution.push_back(Move(Move::PIECES::UP, Move::TYPE::PRIME));
 
 	// return the piece location
 	return piece;
 }
 
-void insertCorner(Cube* cube, LOCATION piece)
+void insertCorner(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// if cross color is facing up
 	if (piece.face == FACE::UP)
@@ -174,64 +174,60 @@ void insertCorner(Cube* cube, LOCATION piece)
 		// work with the adjacent piece in position 0
 		LOCATION adj = adjs.first.idx == 0 ? adjs.first : adjs.second;
 		// turn adjacent face clockwise
-		std::cout << cube->move(adj.face) << " ";
+		solution.push_back(cube->move(adj.face));
 		// turn up face twice
-		cube->u();
-		cube->u();
-		std::cout << "U2 ";
+		solution.push_back(cube->parseMove("U2"));
 		// turn adjacent face counter clockwise
-		std::cout << cube->move(adj.face, "prime") << " ";
+		solution.push_back(cube->move(adj.face, "prime"));
 		// turn up face counter clockwise
-		std::cout << cube->move(FACE::UP, "prime") << " ";
+		solution.push_back(cube->move(FACE::UP, "prime"));
 		// now piece is in an easier case, so recurse
-		insertCorner(cube, { adj.face, 0 });
+		insertCorner(cube, { adj.face, 0 }, solution);
 	}
 	// if cross color is in position 0
 	else if (piece.idx == 0)
 	{
 		// turn face clockwise
-		std::cout << cube->move(piece.face) << " ";
+		solution.push_back(cube->move(piece.face));
 		// turn up face clockwise
-		std::cout << cube->move(FACE::UP) << " ";
+		solution.push_back(cube->move(FACE::UP));
 		// turn face counter clockwise
-		std::cout << cube->move(piece.face, "prime") << "\n";
+		solution.push_back(cube->move(piece.face, "prime"));
 	}
 	// if cross color is in position 2
 	else if (piece.idx == 2)
 	{
 		// turn face counter clockwise
-		std::cout << cube->move(piece.face, "prime") << " ";
+		solution.push_back(cube->move(piece.face, "prime"));
 		// turn up face counter clockwise
-		std::cout << cube->move(FACE::UP, "prime") << " ";
+		solution.push_back(cube->move(FACE::UP, "prime"));
 		// turn face clockwise
-		std::cout << cube->move(piece.face) << "\n";
+		solution.push_back(cube->move(piece.face));
 	}
 }
 
-void solveCorner(Cube* cube, LOCATION piece)
+void solveCorner(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	if (cube->isPieceSolved(piece))
 		return;
 
-	piece = bringCornerToTop(cube, piece);
-	piece = moveCornerOverCenter(cube, piece);
-	insertCorner(cube, piece);
+	piece = bringCornerToTop(cube, piece, solution);
+	piece = moveCornerOverCenter(cube, piece, solution);
+	insertCorner(cube, piece, solution);
 }
 
 /**
 * Solve the corners for the given color.
 * Assumes that the cross is solved and oriented down.
 */
-void solveCorners(Cube* cube, COLOR color)
+void solveCorners(Cube* cube, COLOR color, std::vector<Move>& solution)
 {
-	std::cout << "Corners solution:" << std::endl;
-
 	// solve corners
 	std::pair<LOCATION, bool> cornerLoc = findUnsolvedCorner(cube, color);
 	while (cornerLoc.second)
 	{
-		solveCorner(cube, cornerLoc.first);
+		solveCorner(cube, cornerLoc.first, solution);
+		solution.push_back(Move(Move::PIECES::Y, Move::TYPE::NO_MOVE));
 		cornerLoc = findUnsolvedCorner(cube, color);
 	}
-	std::cout << "\n\n";
 }

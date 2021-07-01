@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <string>
 #include <utility>
+#include <vector>
+
+#include "Move.h"
 
 class Cube
 {
@@ -71,6 +74,11 @@ public:
 	Cube();
 
 	/**
+	* Reset the cube to the solved state.
+	*/
+	void reset();
+
+	/**
 	* Check if the cube state is solved.
 	*/
 	bool isSolved();
@@ -88,7 +96,7 @@ public:
 	std::pair<LOCATION, bool> getAdjacentEdge(LOCATION loc);
 	std::pair<LOCATION, LOCATION> getAdjacentCorner(LOCATION loc);
 
-	std::string move(FACE face, const std::string& type = "");
+	Move move(FACE face, const std::string& type = "");
 	bool isPieceSolved(LOCATION loc);
 
 	void printLocation(LOCATION loc);
@@ -106,7 +114,12 @@ public:
 	/**
 	* Read and execute a sequence of moves.
 	*/
-	void readMoves(const std::string& moves);
+	std::vector<Move> readMoves(const std::string& moves);
+
+	/**
+	* Read and execute a single move.
+	*/
+	Move parseMove(const std::string& move);
 
 	/**
 	* Functions for outer turns.
@@ -190,11 +203,6 @@ private:
 	uint64_t cornersMask = 0xff00ff00ff00ff00;
 
 	/**
-	* Reset the cube to the solved state.
-	*/
-	void reset();
-
-	/**
 	* Helper functions for selecting specific stickers
 	*/
 	char getColorChar(COLOR c);
@@ -210,11 +218,6 @@ private:
 	*/
 	void setFace(FACE f, uint64_t value);
 	void setCenter(FACE f, COLOR c);
-
-	/**
-	* Read and execute a single move.
-	*/
-	void readMove(const std::string& move);
 };
 
 #endif

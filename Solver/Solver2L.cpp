@@ -39,7 +39,7 @@ std::pair<LOCATION, bool> findUnsolved2LEdge(Cube* cube, COLOR color)
 * disturbing the first layer or any solved second layer
 * edges.
 */
-LOCATION bring2LEdgeToTopLayer(Cube* cube, LOCATION piece)
+LOCATION bring2LEdgeToTopLayer(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// find which layer it currently is
 	LAYER layer = getLayer(cube, piece);
@@ -54,14 +54,14 @@ LOCATION bring2LEdgeToTopLayer(Cube* cube, LOCATION piece)
 		FACE rightFace = piece.idx == 7 ? piece.face : cube->getAdjacentEdge(piece).first.face;
 
 		// right sexy move
-		std::cout << cube->move(rightFace) << " ";
-		std::cout << cube->move(FACE::UP) << " ";
-		std::cout << cube->move(rightFace, "prime") << " ";
-		std::cout << cube->move(FACE::UP, "prime") << " ";
+		solution.push_back(cube->move(rightFace));
+		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube->move(rightFace, "prime"));
+		solution.push_back(cube->move(FACE::UP, "prime"));
 		// left sexy move (mostly)
-		std::cout << cube->move(leftFace, "prime") << " ";
-		std::cout << cube->move(FACE::UP, "prime") << " ";
-		std::cout << cube->move(leftFace) << " ";
+		solution.push_back(cube->move(leftFace, "prime"));
+		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube->move(leftFace));
 
 		// location is now idx 1 of face opposite leftFace
 		piece.face = cube->getOppositeFace(leftFace);
@@ -79,7 +79,7 @@ LOCATION bring2LEdgeToTopLayer(Cube* cube, LOCATION piece)
 * Align the outward facing sticker on the edge piece with
 * its corresponding center.
 */
-LOCATION align2LEdge(Cube* cube, LOCATION piece)
+LOCATION align2LEdge(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// ensure we're working with the outer edge
 	COLOR toMatch = piece.face != FACE::UP ? cube->getSticker(piece) : cube->getSticker(cube->getAdjacentEdge(piece).first);
@@ -96,11 +96,11 @@ LOCATION align2LEdge(Cube* cube, LOCATION piece)
 	piece.face = currFace;
 
 	if (moves == 1)
-		std::cout << "U ";
+		solution.push_back(Move(Move::PIECES::UP, Move::TYPE::NORMAL));
 	else if (moves == 2)
-		std::cout << "U2 ";
+		solution.push_back(Move(Move::PIECES::UP, Move::TYPE::DOUBLE));
 	else if (moves == 3)
-		std::cout << "U\' ";
+		solution.push_back(Move(Move::PIECES::UP, Move::TYPE::PRIME));
 
 	return piece;
 }
@@ -110,7 +110,7 @@ LOCATION align2LEdge(Cube* cube, LOCATION piece)
 *
 * Assumes the given location is in the top layer.
 */
-void insert2LEdge(Cube* cube, LOCATION piece)
+void insert2LEdge(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// get both stickers
 	LOCATION topPiece = piece.face == FACE::UP ? piece : cube->getAdjacentEdge(piece).first;
@@ -123,40 +123,40 @@ void insert2LEdge(Cube* cube, LOCATION piece)
 	// insert to the right
 	if (cube->getCenter(rightFace) == cube->getSticker(topPiece))
 	{
-		std::cout << cube->move(FACE::UP) << " ";
-		std::cout << cube->move(rightFace) << " ";
-		std::cout << cube->move(FACE::UP, "prime") << " ";
-		std::cout << cube->move(rightFace, "prime") << " ";
-		std::cout << cube->move(FACE::UP, "prime") << " ";
-		std::cout << cube->move(sidePiece.face, "prime") << " ";
-		std::cout << cube->move(FACE::UP) << " ";
-		std::cout << cube->move(sidePiece.face) << "\n";
+		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube->move(rightFace));
+		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube->move(rightFace, "prime"));
+		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube->move(sidePiece.face, "prime"));
+		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube->move(sidePiece.face));
 	}
 	// insert to the left
 	else if (cube->getCenter(leftFace) == cube->getSticker(topPiece))
 	{
-		std::cout << cube->move(FACE::UP, "prime") << " ";
-		std::cout << cube->move(leftFace, "prime") << " ";
-		std::cout << cube->move(FACE::UP) << " ";
-		std::cout << cube->move(leftFace) << " ";
-		std::cout << cube->move(FACE::UP) << " ";
-		std::cout << cube->move(sidePiece.face) << " ";
-		std::cout << cube->move(FACE::UP, "prime") << " ";
-		std::cout << cube->move(sidePiece.face, "prime") << "\n";
+		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube->move(leftFace, "prime"));
+		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube->move(leftFace));
+		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube->move(sidePiece.face));
+		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube->move(sidePiece.face, "prime"));
 	}
 }
 
 /**
 * Solve the given second layer edge
 */
-void solveSecondLayerEdge(Cube* cube, LOCATION piece)
+void solveSecondLayerEdge(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 {
 	if (cube->isPieceSolved(piece))
 		return;
 
-	piece = bring2LEdgeToTopLayer(cube, piece);
-	piece = align2LEdge(cube, piece);
-	insert2LEdge(cube, piece);
+	piece = bring2LEdgeToTopLayer(cube, piece, solution);
+	piece = align2LEdge(cube, piece, solution);
+	insert2LEdge(cube, piece, solution);
 }
 
 /**
@@ -165,19 +165,17 @@ void solveSecondLayerEdge(Cube* cube, LOCATION piece)
 * Cross color is assumed to be oriented down,
 * and the entire first layer is assumed to be solved
 */
-void solveSecondLayer(Cube* cube)
+void solveSecondLayer(Cube* cube, std::vector<Move>& solution)
 {
 	// the edge color to avoid is the up face's color
 	COLOR color = cube->getCenter(FACE::UP);
-
-	std::cout << "Second layer solution:" << std::endl;
 
 	// solve corners
 	std::pair<LOCATION, bool> edgeLoc = findUnsolved2LEdge(cube, color);
 	while (edgeLoc.second)
 	{
-		solveSecondLayerEdge(cube, edgeLoc.first);
+		solveSecondLayerEdge(cube, edgeLoc.first, solution);
+		solution.push_back(Move(Move::PIECES::Y, Move::TYPE::NO_MOVE));
 		edgeLoc = findUnsolved2LEdge(cube, color);
 	}
-	std::cout << "\n\n";
 }

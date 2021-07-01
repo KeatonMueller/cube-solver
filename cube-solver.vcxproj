@@ -89,7 +89,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Solver;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Util;Cube;Solver;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Solver;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Util;Cube;Solver;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -119,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Solver;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Util;Cube;Solver;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,7 +134,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>Solver;$(SolutionDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Util;Cube;Solver;$(SolutionDir)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,7 +144,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Cube.cpp" />
+    <ClCompile Include="Cube\Cube.cpp" />
+    <ClCompile Include="Cube\Move.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Solver\Solver.cpp" />
     <ClCompile Include="Solver\Solver2L.cpp" />
@@ -152,17 +153,18 @@
     <ClCompile Include="Solver\SolverCorners.cpp" />
     <ClCompile Include="Solver\SolverOLL.cpp" />
     <ClCompile Include="Solver\SolverPLL.cpp" />
-    <ClCompile Include="Util.cpp" />
+    <ClCompile Include="Util\Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Cube.h" />
+    <ClInclude Include="Cube\Cube.h" />
+    <ClInclude Include="Cube\Move.h" />
     <ClInclude Include="Solver\Solver.h" />
     <ClInclude Include="Solver\Solver2L.h" />
     <ClInclude Include="Solver\SolverCross.h" />
     <ClInclude Include="Solver\SolverCorners.h" />
     <ClInclude Include="Solver\SolverOLL.h" />
     <ClInclude Include="Solver\SolverPLL.h" />
-    <ClInclude Include="Util.h" />
+    <ClInclude Include="Util\Util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

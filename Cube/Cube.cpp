@@ -373,116 +373,44 @@ std::pair<Cube::LOCATION, Cube::LOCATION> Cube::getAdjacentCorner(LOCATION loc)
 /**
 * Perform a move of the given type on the requested face.
 *
-* Return a string corresponding to the move performed.
+* Return a Move object corresponding to the move performed.
 */
-std::string Cube::move(FACE face, const std::string& type)
+Move Cube::move(FACE face, const std::string& type)
 {
+	// get the string of the requested face
+	std::string move = "";
 	switch (face)
 	{
 	case FACE::UP:
-		if (type == "")
-		{
-			u();
-			return "U";
-		}
-		else if (type == "prime")
-		{
-			uPrime();
-			return "U\'";
-		}
-		else if (type == "2")
-		{
-			u();
-			u();
-			return "U2";
-		}
+		move = "U";
+		break;
 	case FACE::DOWN:
-		if (type == "")
-		{
-			d();
-			return "D";
-		}
-		else if (type == "prime")
-		{
-			dPrime();
-			return "D\'";
-		}
-		else if (type == "2")
-		{
-			d();
-			d();
-			return "D2";
-		}
+		move = "D";
+		break;
 	case FACE::FRONT:
-		if (type == "")
-		{
-			f();
-			return "F";
-		}
-		else if (type == "prime")
-		{
-			fPrime();
-			return "F\'";
-		}
-		else if (type == "2")
-		{
-			f();
-			f();
-			return "F2";
-		}
+		move = "F";
+		break;
 	case FACE::BACK:
-		if (type == "")
-		{
-			b();
-			return "B";
-		}
-		else if (type == "prime")
-		{
-			bPrime();
-			return "B\'";
-		}
-		else if (type == "2")
-		{
-			b();
-			b();
-			return "B2";
-		}
+		move = "B";
+		break;
 	case FACE::RIGHT:
-		if (type == "")
-		{
-			r();
-			return "R";
-		}
-		else if (type == "prime")
-		{
-			rPrime();
-			return "R\'";
-		}
-		else if (type == "2")
-		{
-			r();
-			r();
-			return "R2";
-		}
+		move = "R";
+		break;
 	case FACE::LEFT:
-		if (type == "")
-		{
-			l();
-			return "L";
-		}
-		else if (type == "prime")
-		{
-			lPrime();
-			return "L\'";
-		}
-		else if (type == "2")
-		{
-			l();
-			l();
-			return "L2";
-		}
+		move = "L";
+		break;
 	}
-	return "";
+
+	// parse move based on type
+	if (type == "")
+		return parseMove(move);
+	else if (type == "prime")
+		return parseMove(move + "\'");
+	else if (type == "2")
+		return parseMove(move + "2");
+
+	// invalid move
+	return Move((Move::PIECES)0, Move::TYPE::NO_MOVE);
 }
 
 /**
@@ -549,24 +477,34 @@ void Cube::setCenter(FACE f, COLOR c)
 
 /**
 * Perform every move present in the string of moves.
-* No spaces are allowed in the input string.
+*
+* Return a vector of Move objects for each extracted move.
 */
-void Cube::readMoves(const std::string& moves)
+std::vector<Move> Cube::readMoves(const std::string& moves)
 {
+	std::vector<Move> moveVector;
+	Move move(Move::PIECES::UP, Move::TYPE::NO_MOVE);
 	uint8_t moveIdx = 0;
 	while (moveIdx < moves.length())
 	{
 		if (moveIdx < moves.length() - 1 && (moves[moveIdx + 1] == '\'' || moves[moveIdx + 1] == '2'))
 		{
-			readMove(moves.substr(moveIdx, 2));
+			move = parseMove(moves.substr(moveIdx, 2));
 			moveIdx += 2;
+
+			if (move.type != Move::TYPE::NO_MOVE)
+				moveVector.push_back(move);
 		}
 		else
 		{
-			readMove(moves.substr(moveIdx, 1));
+			move = parseMove(moves.substr(moveIdx, 1));
 			moveIdx += 1;
+
+			if (move.type != Move::TYPE::NO_MOVE)
+				moveVector.push_back(move);
 		}
 	}
+	return moveVector;
 }
 
 /**
@@ -574,171 +512,301 @@ void Cube::readMoves(const std::string& moves)
 *
 * The move may be clockwise 90 degrees, counter clockwise 90 degrees,
 * or a 180 degree turn.
+*
+* Return the corresponding Move object.
 */
-void Cube::readMove(const std::string& move)
+Move Cube::parseMove(const std::string& move)
 {
 	if (move == "U")
+	{
 		u();
+		return Move(Move::PIECES::UP, Move::TYPE::NORMAL);
+	}
 	else if (move == "U\'")
+	{
 		uPrime();
+		return Move(Move::PIECES::UP, Move::TYPE::PRIME);
+	}
 	else if (move == "U2")
 	{
 		u();
 		u();
+		return Move(Move::PIECES::UP, Move::TYPE::DOUBLE);
 	}
 	else if (move == "u")
+	{
 		uWide();
+		return Move(Move::PIECES::UP_WIDE, Move::TYPE::NORMAL);
+	}
 	else if (move == "u\'")
+	{
 		uPrimeWide();
+		return Move(Move::PIECES::UP_WIDE, Move::TYPE::PRIME);
+	}
 	else if (move == "u2")
 	{
 		uWide();
 		uWide();
+		return Move(Move::PIECES::UP_WIDE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "D")
+	{
 		d();
+		return Move(Move::PIECES::DOWN, Move::TYPE::NORMAL);
+	}
 	else if (move == "D\'")
+	{
 		dPrime();
+		return Move(Move::PIECES::DOWN, Move::TYPE::PRIME);
+	}
 	else if (move == "D2")
 	{
 		d();
 		d();
+		return Move(Move::PIECES::DOWN, Move::TYPE::DOUBLE);
 	}
 	else if (move == "d")
+	{
 		dWide();
+		return Move(Move::PIECES::DOWN_WIDE, Move::TYPE::NORMAL);
+	}
 	else if (move == "d\'")
+	{
 		dPrimeWide();
+		return Move(Move::PIECES::DOWN_WIDE, Move::TYPE::PRIME);
+	}
 	else if (move == "d2")
 	{
 		dWide();
 		dWide();
+		return Move(Move::PIECES::DOWN_WIDE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "F")
+	{
 		f();
+		return Move(Move::PIECES::FRONT, Move::TYPE::NORMAL);
+	}
 	else if (move == "F\'")
+	{
 		fPrime();
+		return Move(Move::PIECES::FRONT, Move::TYPE::PRIME);
+	}
 	else if (move == "F2")
 	{
 		f();
 		f();
+		return Move(Move::PIECES::FRONT, Move::TYPE::DOUBLE);
 	}
 	else if (move == "f")
+	{
 		fWide();
+		return Move(Move::PIECES::FRONT_WIDE, Move::TYPE::NORMAL);
+	}
 	else if (move == "f\'")
+	{
 		fPrimeWide();
+		return Move(Move::PIECES::FRONT_WIDE, Move::TYPE::PRIME);
+	}
 	else if (move == "f2")
 	{
 		fWide();
 		fWide();
+		return Move(Move::PIECES::FRONT_WIDE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "B")
+	{
 		b();
+		return Move(Move::PIECES::BACK, Move::TYPE::NORMAL);
+	}
 	else if (move == "B\'")
+	{
 		bPrime();
+		return Move(Move::PIECES::BACK, Move::TYPE::PRIME);
+	}
 	else if (move == "B2")
 	{
 		b();
 		b();
+		return Move(Move::PIECES::BACK, Move::TYPE::DOUBLE);
 	}
 	else if (move == "b")
+	{
 		bWide();
+		return Move(Move::PIECES::BACK_WIDE, Move::TYPE::NORMAL);
+	}
 	else if (move == "b\'")
+	{
 		bPrimeWide();
+		return Move(Move::PIECES::BACK_WIDE, Move::TYPE::PRIME);
+	}
 	else if (move == "b2")
 	{
 		bWide();
 		bWide();
+		return Move(Move::PIECES::BACK_WIDE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "R")
+	{
 		r();
+		return Move(Move::PIECES::RIGHT, Move::TYPE::NORMAL);
+	}
 	else if (move == "R\'")
+	{
 		rPrime();
+		return Move(Move::PIECES::RIGHT, Move::TYPE::PRIME);
+	}
 	else if (move == "R2")
 	{
 		r();
 		r();
+		return Move(Move::PIECES::RIGHT, Move::TYPE::DOUBLE);
 	}
 	else if (move == "r")
+	{
 		rWide();
+		return Move(Move::PIECES::RIGHT_WIDE, Move::TYPE::NORMAL);
+	}
 	else if (move == "r\'")
+	{
 		rPrimeWide();
+		return Move(Move::PIECES::RIGHT_WIDE, Move::TYPE::PRIME);
+	}
 	else if (move == "r2")
 	{
 		rWide();
 		rWide();
+		return Move(Move::PIECES::RIGHT_WIDE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "L")
+	{
 		l();
+		return Move(Move::PIECES::LEFT, Move::TYPE::NORMAL);
+	}
 	else if (move == "L\'")
+	{
 		lPrime();
+		return Move(Move::PIECES::LEFT, Move::TYPE::PRIME);
+	}
 	else if (move == "L2")
 	{
 		l();
 		l();
+		return Move(Move::PIECES::LEFT, Move::TYPE::DOUBLE);
 	}
 	else if (move == "l")
+	{
 		lWide();
+		return Move(Move::PIECES::LEFT_WIDE, Move::TYPE::NORMAL);
+	}
 	else if (move == "l\'")
+	{
 		lPrimeWide();
+		return Move(Move::PIECES::LEFT_WIDE, Move::TYPE::PRIME);
+	}
 	else if (move == "l2")
 	{
 		lWide();
 		lWide();
+		return Move(Move::PIECES::LEFT_WIDE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "M")
+	{
 		m();
+		return Move(Move::PIECES::M_SLICE, Move::TYPE::NORMAL);
+	}
 	else if (move == "M\'")
+	{
 		mPrime();
+		return Move(Move::PIECES::M_SLICE, Move::TYPE::PRIME);
+	}
 	else if (move == "M2")
 	{
 		m();
 		m();
+		return Move(Move::PIECES::M_SLICE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "E")
+	{
 		e();
+		return Move(Move::PIECES::E_SLICE, Move::TYPE::NORMAL);
+	}
 	else if (move == "E\'")
+	{
 		ePrime();
+		return Move(Move::PIECES::E_SLICE, Move::TYPE::PRIME);
+	}
 	else if (move == "E2")
 	{
 		e();
 		e();
+		return Move(Move::PIECES::E_SLICE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "S")
+	{
 		s();
+		return Move(Move::PIECES::S_SLICE, Move::TYPE::NORMAL);
+	}
 	else if (move == "S\'")
+	{
 		sPrime();
+		return Move(Move::PIECES::S_SLICE, Move::TYPE::PRIME);
+	}
 	else if (move == "S2")
 	{
 		s();
 		s();
+		return Move(Move::PIECES::S_SLICE, Move::TYPE::DOUBLE);
 	}
 	else if (move == "X" || move == "x")
+	{
 		x();
+		return Move(Move::PIECES::X, Move::TYPE::NORMAL);
+	}
 	else if (move == "X\'" || move == "x\'")
+	{
 		xPrime();
+		return Move(Move::PIECES::X, Move::TYPE::PRIME);
+	}
 	else if (move == "X2" || move == "x2")
 	{
 		x();
 		x();
+		return Move(Move::PIECES::X, Move::TYPE::DOUBLE);
 	}
 	else if (move == "Y" || move == "y")
+	{
 		y();
+		return Move(Move::PIECES::Y, Move::TYPE::NORMAL);
+	}
 	else if (move == "Y\'" || move == "y\'")
+	{
 		yPrime();
+		return Move(Move::PIECES::Y, Move::TYPE::PRIME);
+	}
 	else if (move == "Y2" || move == "y2")
 	{
 		y();
 		y();
+		return Move(Move::PIECES::Y, Move::TYPE::DOUBLE);
 	}
 	else if (move == "Z" || move == "z")
+	{
 		z();
+		return Move(Move::PIECES::Z, Move::TYPE::NORMAL);
+	}
 	else if (move == "Z\'" || move == "z\'")
+	{
 		zPrime();
+		return Move(Move::PIECES::Z, Move::TYPE::PRIME);
+	}
 	else if (move == "Z2" || move == "z2")
 	{
 		z();
 		z();
+		return Move(Move::PIECES::Z, Move::TYPE::DOUBLE);
 	}
+	// unrecognized move type
+	return Move(Move::PIECES::UP, Move::TYPE::NO_MOVE);
 }
 
 /**

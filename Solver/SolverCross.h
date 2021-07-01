@@ -10,6 +10,6 @@ typedef Cube::FACE FACE;
 /**
 * Solve the cross of the given color on the given cube.
 */
-void solveCross(Cube* cube, COLOR color);
+void solveCross(Cube* cube, COLOR color, std::vector<Move>& solution);
 
 #endif

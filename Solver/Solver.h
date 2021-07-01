@@ -1,7 +1,10 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#include <vector>
+
 #include "Cube.h"
+#include "Move.h"
 #include "SolverCross.h"
 #include "SolverCorners.h"
 #include "Solver2L.h"
@@ -28,8 +31,13 @@ enum class LAYER : uint8_t
 LAYER getLayer(Cube* c, LOCATION l);
 
 /**
+* Print the given solution.
+*/
+void printSolution(std::vector<Move>& solution);
+
+/**
 * Solve the given Rubik's Cube!
 */
-void solve(Cube* cube);
+std::vector<Move> solve(Cube* cube);
 
 #endif

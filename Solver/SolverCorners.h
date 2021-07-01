@@ -10,6 +10,6 @@ typedef Cube::FACE FACE;
 /**
 * Solve the corners for the given color
 */
-void solveCorners(Cube* cube, COLOR color);
+void solveCorners(Cube* cube, COLOR color, std::vector<Move>& solution);
 
 #endif
