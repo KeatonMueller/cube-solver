@@ -6,7 +6,7 @@
 * Return the location of an unsolved edge piece of the given color.
 * Second item in pair is false if no more unsolved edge pieces remain.
 */
-std::pair<LOCATION, bool> findUnsolvedCrossEdge(Cube* cube, COLOR color)
+std::pair<LOCATION, bool> findUnsolvedCrossEdge(Cube& cube, COLOR color)
 {
 	// search every sticker on every face
 	for (uint8_t face = 0; face < 6; face++)
@@ -16,7 +16,7 @@ std::pair<LOCATION, bool> findUnsolvedCrossEdge(Cube* cube, COLOR color)
 			// skip even indices - they are corner pieces
 			if (idx % 2 == 0)
 				continue;
-			if (cube->getSticker({ (FACE)face, idx }) == color && !cube->isPieceSolved({ (FACE)face, idx }))
+			if (cube.getSticker({ (FACE)face, idx }) == color && !cube.isPieceSolved({ (FACE)face, idx }))
 				return std::make_pair(LOCATION({ (FACE)face, idx }), true);
 		}
 	}
@@ -33,10 +33,10 @@ std::pair<LOCATION, bool> findUnsolvedCrossEdge(Cube* cube, COLOR color)
 *
 * Return the piece's new location.
 */
-LOCATION bringEdgeToTopLayer(Cube* cube, LOCATION piece, std::vector<Move>& solution)
+LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// find which layer it currently is
-	LAYER layer = getLayer(cube, piece);
+	LAYER layer = getLayer(piece);
 
 	// perform moves necessary to bring to top
 	if (layer == LAYER::TOP)
@@ -48,14 +48,14 @@ LOCATION bringEdgeToTopLayer(Cube* cube, LOCATION piece, std::vector<Move>& solu
 		if (piece.face != FACE::DOWN)
 		{
 			// twist its face twice
-			solution.push_back(cube->move(piece.face, "2"));
+			solution.push_back(cube.move(piece.face, "2"));
 			return { piece.face, 1 };
 		}
 		// piece is in bottom layer facing the bottom
 		else
 		{
 			// twist the adjacent face twice
-			solution.push_back(cube->move(cube->getAdjacentEdge(piece).first.face, "2"));
+			solution.push_back(cube.move(cube.getAdjacentEdge(piece).first.face, "2"));
 			uint8_t newIdx = (piece.idx == 3 || piece.idx == 7) ? piece.idx : 6 - piece.idx;
 			return { FACE::UP, newIdx };
 		}
@@ -63,19 +63,19 @@ LOCATION bringEdgeToTopLayer(Cube* cube, LOCATION piece, std::vector<Move>& solu
 	else
 	{
 		// piece is somewhere in the middle
-		LOCATION adj = cube->getAdjacentEdge(piece).first;
+		LOCATION adj = cube.getAdjacentEdge(piece).first;
 		// bring it to the top such that white is facing up
 		if (adj.idx == 3)
 		{
-			solution.push_back(cube->move(adj.face, "prime"));
-			solution.push_back(cube->move(FACE::UP));
-			solution.push_back(cube->move(adj.face));
+			solution.push_back(cube.move(adj.face, "prime"));
+			solution.push_back(cube.move(FACE::UP));
+			solution.push_back(cube.move(adj.face));
 		}
 		else if (adj.idx == 7)
 		{
-			solution.push_back(cube->move(adj.face));
-			solution.push_back(cube->move(FACE::UP));
-			solution.push_back(cube->move(adj.face, "prime"));
+			solution.push_back(cube.move(adj.face));
+			solution.push_back(cube.move(FACE::UP));
+			solution.push_back(cube.move(adj.face, "prime"));
 		}
 		// determine the new position of the piece
 		uint8_t newIdx = 0;
@@ -106,32 +106,32 @@ LOCATION bringEdgeToTopLayer(Cube* cube, LOCATION piece, std::vector<Move>& solu
 *
 * Return the piece's new location.
 */
-LOCATION moveEdgeOverCenter(Cube* cube, LOCATION piece, std::vector<Move>& solution)
+LOCATION moveEdgeOverCenter(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 {
 	uint8_t moves = 0;
 	// if cross color is facing up
 	if (piece.face == FACE::UP)
 	{
-		LOCATION adj = cube->getAdjacentEdge(piece).first;
+		LOCATION adj = cube.getAdjacentEdge(piece).first;
 
 		// turn the up face until the edge sticker is aligned
 		// could optimize this so U3 isn't possible in the future
-		while (cube->getSticker(adj) != cube->getCenter(adj.face))
+		while (cube.getSticker(adj) != cube.getCenter(adj.face))
 		{
-			cube->u();
+			cube.u();
 			piece.idx = (piece.idx + 2) % 8;
-			adj = cube->getAdjacentEdge(piece).first;
+			adj = cube.getAdjacentEdge(piece).first;
 			moves++;
 		}
 	}
 	// if cross color is facing out
 	else
 	{
-		COLOR targetColor = cube->getSticker(cube->getAdjacentEdge(piece).first);
-		while (targetColor != cube->getCenter(piece.face))
+		COLOR targetColor = cube.getSticker(cube.getAdjacentEdge(piece).first);
+		while (targetColor != cube.getCenter(piece.face))
 		{
-			cube->u();
-			piece.face = cube->getAdjacentFace(piece.face, "y");
+			cube.u();
+			piece.face = cube.getAdjacentFace(piece.face, "y");
 			moves++;
 		}
 	}
@@ -155,26 +155,26 @@ LOCATION moveEdgeOverCenter(Cube* cube, LOCATION piece, std::vector<Move>& solut
 * Assumes that the piece is located in the top layer directly
 * over the location it needs to be inserted into.
 */
-void insertCrossEdge(Cube* cube, LOCATION piece, std::vector<Move>& solution)
+void insertCrossEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// simple case is when white is facing up
 	if (piece.face == FACE::UP)
 	{
 		// turn adjacent side twice
-		solution.push_back(cube->move(cube->getAdjacentEdge(piece).first.face, "2"));
+		solution.push_back(cube.move(cube.getAdjacentEdge(piece).first.face, "2"));
 	}
 	// white is facing to the side
 	else
 	{
 		// turn the up face counter clockwise
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 		// turn the face to the right counter clockwise
-		FACE adjFace = cube->getAdjacentEdge({ piece.face, 3 }).first.face;
-		solution.push_back(cube->move(adjFace, "prime"));
+		FACE adjFace = cube.getAdjacentEdge({ piece.face, 3 }).first.face;
+		solution.push_back(cube.move(adjFace, "prime"));
 		// turn piece's face clockwise
-		solution.push_back(cube->move(piece.face));
+		solution.push_back(cube.move(piece.face));
 		// undo the adjacent face's turn
-		solution.push_back(cube->move(adjFace));
+		solution.push_back(cube.move(adjFace));
 	}
 }
 
@@ -184,9 +184,9 @@ void insertCrossEdge(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 * color, and that the cross color's center is already facing
 * down.
 */
-void solveCrossPiece(Cube* cube, LOCATION piece, std::vector<Move>& solution)
+void solveCrossPiece(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 {
-	if (cube->isPieceSolved(piece))
+	if (cube.isPieceSolved(piece))
 		return;
 
 	piece = bringEdgeToTopLayer(cube, piece, solution);
@@ -197,33 +197,35 @@ void solveCrossPiece(Cube* cube, LOCATION piece, std::vector<Move>& solution)
 /**
 * Orient the cube so the given color is facing down.
 */
-void orientDown(Cube* cube, COLOR color, std::vector<Move>& solution)
+void orientDown(Cube& cube, COLOR color, std::vector<Move>& solution)
 {
-	if (cube->getCenter(FACE::UP) == color)
-		solution.push_back(cube->parseMove("z2"));
-	else if (cube->getCenter(FACE::DOWN) == color)
+	if (cube.getCenter(FACE::UP) == color)
+		solution.push_back(cube.parseMove("z2"));
+	else if (cube.getCenter(FACE::DOWN) == color)
 		return;
-	else if (cube->getCenter(FACE::FRONT) == color)
-		solution.push_back(cube->parseMove("x'"));
-	else if (cube->getCenter(FACE::BACK) == color)
-		solution.push_back(cube->parseMove("x"));
-	else if (cube->getCenter(FACE::RIGHT) == color)
-		solution.push_back(cube->parseMove("z"));
-	else if (cube->getCenter(FACE::LEFT) == color)
-		solution.push_back(cube->parseMove("z'"));
+	else if (cube.getCenter(FACE::FRONT) == color)
+		solution.push_back(cube.parseMove("x'"));
+	else if (cube.getCenter(FACE::BACK) == color)
+		solution.push_back(cube.parseMove("x"));
+	else if (cube.getCenter(FACE::RIGHT) == color)
+		solution.push_back(cube.parseMove("z"));
+	else if (cube.getCenter(FACE::LEFT) == color)
+		solution.push_back(cube.parseMove("z'"));
 }
 
 
 /**
-* Solve the cross of the given color on the given cube.
+* Solve the cross on the given cube.
 *
-* Does not assume that any part of the cube is solved, nor
-* does it assume an orientation of the cube.
+* Does not assume that any part of the cube is solved.
+*
+* Whichever color is currently on the down face is selected
+* for the cross color.
 */
-void solveCross(Cube* cube, COLOR color, std::vector<Move>& solution)
+void solveCross(Cube& cube, std::vector<Move>& solution)
 {
-	// orient the cube so the cross color is on the bottom
-	orientDown(cube, color, solution);
+	// get the cross color
+	COLOR color = cube.getCenter(FACE::DOWN);
 
 	// solve cross
 	std::pair<LOCATION, bool> edgeLoc = findUnsolvedCrossEdge(cube, color);

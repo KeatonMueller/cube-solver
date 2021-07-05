@@ -44,7 +44,7 @@ void testRandomScrambles()
 		scramble = generateScramble();
 		c.readMoves(scramble);
 		// solve it
-		std::vector<Move> solution = solve(&c);
+		std::vector<Move> solution = solve(c);
 		if (!c.isSolved())
 		{
 			std::cout << "Failed to solve: " << scramble << std::endl;
@@ -68,7 +68,7 @@ int main()
 	// get the solution
 	Cube c;
 	c.readMoves(scramble);
-	std::vector<Move> solution = solve(&c);
+	std::vector<Move> solution = solve(c);
 	std::cout << "\nSolution:\n\n";
 	printSolution(solution);
 }

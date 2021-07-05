@@ -5,7 +5,7 @@
 /**
 * Find which layer the given location is in.
 */
-LAYER getLayer(Cube* c, LOCATION l)
+LAYER getLayer(LOCATION l)
 {
 	if (l.face == FACE::DOWN)
 		return LAYER::BOTTOM;
@@ -25,7 +25,7 @@ LAYER getLayer(Cube* c, LOCATION l)
 */
 void cleanSolution(std::vector<Move>& solution)
 {
-	for (int i = 0; i < solution.size() - 1; i++)
+	for (size_t i = 0; i < solution.size() - 1; i++)
 	{
 		if (solution[i].canMergeWith(solution[i + 1]))
 		{
@@ -57,14 +57,13 @@ void printSolution(std::vector<Move>& solution)
 /**
 * Solve the given Rubik's Cube.
 */
-std::vector<Move> solve(Cube* cube)
+std::vector<Move> solve(Cube& cube)
 {
 	// vector of moves in the solution
 	std::vector<Move> solution;
 
-	COLOR color = COLOR::WHITE;
-	solveCross(cube, color, solution);
-	solveCorners(cube, color, solution);
+	solveCross(cube, solution);
+	solveCorners(cube, solution);
 	solveSecondLayer(cube, solution);
 	solveOLL(cube, solution);
 	solvePLL(cube, solution);

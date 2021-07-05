@@ -10,6 +10,6 @@ typedef Cube::FACE FACE;
 /**
 * Permute the last layer on the given cube.
 */
-void solvePLL(Cube* cube, std::vector<Move>& solution);
+void solvePLL(Cube& cube, std::vector<Move>& solution);
 
 #endif

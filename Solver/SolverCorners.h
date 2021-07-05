@@ -8,8 +8,8 @@ typedef Cube::COLOR COLOR;
 typedef Cube::FACE FACE;
 
 /**
-* Solve the corners for the given color
+* Solve the corners on the given cube.
 */
-void solveCorners(Cube* cube, COLOR color, std::vector<Move>& solution);
+void solveCorners(Cube& cube, std::vector<Move>& solution);
 
 #endif

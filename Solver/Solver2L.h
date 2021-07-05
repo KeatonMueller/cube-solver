@@ -10,6 +10,6 @@ typedef Cube::FACE FACE;
 /**
 * Solve the second layer on the given cube.
 */
-void solveSecondLayer(Cube* cube, std::vector<Move>& solution);
+void solveSecondLayer(Cube& cube, std::vector<Move>& solution);
 
 #endif

@@ -10,6 +10,6 @@ typedef Cube::FACE FACE;
 /**
 * Orient the last layer on the given cube.
 */
-void solveOLL(Cube* cube, std::vector<Move>& solution);
+void solveOLL(Cube& cube, std::vector<Move>& solution);
 
 #endif

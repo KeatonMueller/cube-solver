@@ -104,12 +104,12 @@ uint8_t getFaceIdx(FACE face)
 * Check if the piece at the given location belongs
 * in the given face.
 */
-bool checkLocation(Cube* cube, COLOR(&faces)[4], FACE face, LOCATION loc)
+bool checkLocation(Cube& cube, COLOR(&faces)[4], FACE face, LOCATION loc)
 {
 	uint8_t idx = getFaceIdx(face);
 	if (faces[idx] == COLOR::EMPTY)
-		faces[idx] = cube->getSticker(loc);
-	else if (faces[idx] != cube->getSticker(loc))
+		faces[idx] = cube.getSticker(loc);
+	else if (faces[idx] != cube.getSticker(loc))
 		return false;
 	return true;
 }
@@ -118,20 +118,20 @@ bool checkLocation(Cube* cube, COLOR(&faces)[4], FACE face, LOCATION loc)
 * Determine if the piece in the top layer at currIdx should move
 * to targetIdx on the given cube.
 */
-bool shouldMoveTo(Cube* cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetIdx)
+bool shouldMoveTo(Cube& cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetIdx)
 {
 	// if moving a corner piece
 	if (currIdx % 2 == 0)
 	{
 		// get the adjacent locations
-		std::pair<LOCATION, LOCATION> adjCurrent = cube->getAdjacentCorner({ FACE::UP, currIdx });
+		std::pair<LOCATION, LOCATION> adjCurrent = cube.getAdjacentCorner({ FACE::UP, currIdx });
 
 		// if move is to opposite corner
 		if ((currIdx + 4) % 8 == targetIdx || (currIdx - 4) % 8 == targetIdx)
 		{
 			// each sticker must be able to go to opposite face
-			FACE oppFace0 = cube->getOppositeFace(adjCurrent.first.face);
-			FACE oppFace1 = cube->getOppositeFace(adjCurrent.second.face);
+			FACE oppFace0 = cube.getOppositeFace(adjCurrent.first.face);
+			FACE oppFace1 = cube.getOppositeFace(adjCurrent.second.face);
 
 			if (!checkLocation(cube, faces, oppFace0, adjCurrent.first))
 				return false;
@@ -147,7 +147,7 @@ bool shouldMoveTo(Cube* cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetI
 				if (currIdx == 0 || currIdx == 4)
 				{
 					// first adjacent goes to the face opposite of second adjacent
-					if (!checkLocation(cube, faces, cube->getOppositeFace(adjCurrent.second.face), adjCurrent.first))
+					if (!checkLocation(cube, faces, cube.getOppositeFace(adjCurrent.second.face), adjCurrent.first))
 						return false;
 					// second adjacent goes to the face of the first adjacent
 					if (!checkLocation(cube, faces, adjCurrent.first.face, adjCurrent.second))
@@ -159,7 +159,7 @@ bool shouldMoveTo(Cube* cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetI
 					if (!checkLocation(cube, faces, adjCurrent.second.face, adjCurrent.first))
 						return false;
 					// second adjacent goes to the face opposite of first adjacent
-					if (!checkLocation(cube, faces, cube->getOppositeFace(adjCurrent.first.face), adjCurrent.second))
+					if (!checkLocation(cube, faces, cube.getOppositeFace(adjCurrent.first.face), adjCurrent.second))
 						return false;
 				}
 			}
@@ -172,13 +172,13 @@ bool shouldMoveTo(Cube* cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetI
 					if (!checkLocation(cube, faces, adjCurrent.second.face, adjCurrent.first))
 						return false;
 					// second adjacent goes to the face opposite of first adjacent
-					if (!checkLocation(cube, faces, cube->getOppositeFace(adjCurrent.first.face), adjCurrent.second))
+					if (!checkLocation(cube, faces, cube.getOppositeFace(adjCurrent.first.face), adjCurrent.second))
 						return false;
 				}
 				else if (currIdx == 2 || currIdx == 6)
 				{
 					// first adjacent goes to the face opposite of second adjacent
-					if (!checkLocation(cube, faces, cube->getOppositeFace(adjCurrent.second.face), adjCurrent.first))
+					if (!checkLocation(cube, faces, cube.getOppositeFace(adjCurrent.second.face), adjCurrent.first))
 						return false;
 					// second adjacent goes to the face of the first adjacent
 					if (!checkLocation(cube, faces, adjCurrent.first.face, adjCurrent.second))
@@ -191,8 +191,8 @@ bool shouldMoveTo(Cube* cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetI
 	else
 	{
 		// make sure the target face matches the current sticker
-		FACE targetFace = cube->getAdjacentEdge({ FACE::UP, targetIdx }).first.face;
-		LOCATION adj = cube->getAdjacentEdge({ FACE::UP, currIdx }).first;
+		FACE targetFace = cube.getAdjacentEdge({ FACE::UP, targetIdx }).first.face;
+		LOCATION adj = cube.getAdjacentEdge({ FACE::UP, currIdx }).first;
 		if (!checkLocation(cube, faces, targetFace, adj))
 			return false;
 	}
@@ -203,12 +203,12 @@ bool shouldMoveTo(Cube* cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetI
 * Check if the piece at the given index is allowed to stay in
 * its current position based on the faces array.
 */
-bool canPieceStay(Cube* cube, COLOR(&faces)[4], uint8_t idx)
+bool canPieceStay(Cube& cube, COLOR(&faces)[4], uint8_t idx)
 {
 	// corner piece
 	if (idx % 2 == 0)
 	{
-		std::pair<LOCATION, LOCATION> adjs = cube->getAdjacentCorner({ FACE::UP, idx });
+		std::pair<LOCATION, LOCATION> adjs = cube.getAdjacentCorner({ FACE::UP, idx });
 		if (!checkLocation(cube, faces, adjs.first.face, adjs.first))
 			return false;
 		if (!checkLocation(cube, faces, adjs.second.face, adjs.second))
@@ -218,7 +218,7 @@ bool canPieceStay(Cube* cube, COLOR(&faces)[4], uint8_t idx)
 	// edge piece
 	else
 	{
-		LOCATION adj = cube->getAdjacentEdge({ FACE::UP, idx }).first;
+		LOCATION adj = cube.getAdjacentEdge({ FACE::UP, idx }).first;
 		if (!checkLocation(cube, faces, adj.face, adj))
 			return false;
 		return true;
@@ -229,7 +229,7 @@ bool canPieceStay(Cube* cube, COLOR(&faces)[4], uint8_t idx)
 * Determine if the given PLL exactly matches the current
 * cube state, without any rotations needed.
 */
-bool pllCaseMatches(Cube* cube, uint64_t pll)
+bool pllCaseMatches(Cube& cube, uint64_t pll)
 {
 	uint8_t targetIdx;
 	COLOR faces[4] = { COLOR::EMPTY, COLOR::EMPTY, COLOR::EMPTY, COLOR::EMPTY };
@@ -262,7 +262,7 @@ bool pllCaseMatches(Cube* cube, uint64_t pll)
 * indicates the number of clockwise rotations needed for the PLL
 * to align with the cube state.
 */
-std::pair<bool, uint8_t> pllCaseFits(Cube* cube, uint64_t pll)
+std::pair<bool, uint8_t> pllCaseFits(Cube& cube, uint64_t pll)
 {
 	// check all four orientations of the PLL
 	for (uint8_t shifts = 0; shifts < 4; shifts++)
@@ -283,7 +283,7 @@ std::pair<bool, uint8_t> pllCaseFits(Cube* cube, uint64_t pll)
 * Returns a pair of the PLL's index followed by the number of clockwise rotations
 * needed for the PLL to match the cube state.
 */
-std::pair<uint8_t, uint8_t> findPLLType(Cube* cube)
+std::pair<uint8_t, uint8_t> findPLLType(Cube& cube)
 {
 	for (uint8_t idx = 0; idx < NUM_PLLS; idx++)
 	{
@@ -301,30 +301,30 @@ std::pair<uint8_t, uint8_t> findPLLType(Cube* cube)
 * Assumes that first two layers are solved and that
 * the last layer has been oriented.
 */
-void solvePLL(Cube* cube, std::vector<Move>& solution)
+void solvePLL(Cube& cube, std::vector<Move>& solution)
 {
 	std::pair<uint8_t, uint8_t> pll = findPLLType(cube);
 
 	// adjust up face
 	if (pll.second == 1)
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 	else if (pll.second == 2)
-		solution.push_back(cube->move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, "2"));
 	else if (pll.second == 3)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// perform PLL (if needed)
 	if (pll.first != NUM_PLLS)
 	{
-		std::vector<Move> moves = cube->readMoves(pllAlgs[pll.first]);
+		std::vector<Move> moves = cube.readMoves(pllAlgs[pll.first]);
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 
 	// adjust up face
 	uint8_t numTurns = 0;
-	while (!cube->isSolved())
+	while (!cube.isSolved())
 	{
-		cube->u();
+		cube.u();
 		numTurns++;
 	}
 	if (numTurns == 1)

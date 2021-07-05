@@ -28,7 +28,7 @@ enum class LAYER : uint8_t
 /**
 * Find which layer the given location is in.
 */
-LAYER getLayer(Cube* c, LOCATION l);
+LAYER getLayer(LOCATION l);
 
 /**
 * Print the given solution.
@@ -38,6 +38,6 @@ void printSolution(std::vector<Move>& solution);
 /**
 * Solve the given Rubik's Cube!
 */
-std::vector<Move> solve(Cube* cube);
+std::vector<Move> solve(Cube& cube);
 
 #endif

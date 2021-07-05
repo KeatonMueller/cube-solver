@@ -130,7 +130,7 @@ uint8_t shiftOLL(uint8_t oll)
 * indicates the number of clockwise rotations needed for the OLL
 * to align with the cube state.
 */
-std::pair<bool, uint8_t> ollCaseFits(Cube* cube, COLOR topColor, uint8_t oll)
+std::pair<bool, uint8_t> ollCaseFits(Cube& cube, COLOR topColor, uint8_t oll)
 {
 	// check all four orientations of the OLL
 	for (uint8_t shifts = 0; shifts < 4; shifts++)
@@ -138,7 +138,7 @@ std::pair<bool, uint8_t> ollCaseFits(Cube* cube, COLOR topColor, uint8_t oll)
 		// generate mask
 		std::pair<uint64_t, uint64_t> mask = generateOLLMask(topColor, oll);
 		// return how many shifts needed if OLL case matches
-		if ((cube->getFace(FACE::UP) & mask.first) == mask.second)
+		if ((cube.getFace(FACE::UP) & mask.first) == mask.second)
 			return std::make_pair(true, shifts);
 		// shift the OLL
 		oll = shiftOLL(oll);
@@ -154,7 +154,7 @@ std::pair<bool, uint8_t> ollCaseFits(Cube* cube, COLOR topColor, uint8_t oll)
 * Returns a pair of the OLL followed by the number of clockwise rotations
 * needed for the OLL to match the cube state.
 */
-std::pair<uint8_t, uint8_t> findOLLType(Cube* cube, COLOR topColor)
+std::pair<uint8_t, uint8_t> findOLLType(Cube& cube, COLOR topColor)
 {
 	for (uint8_t idx = 0; idx < NUM_OLL_TYPES; idx++)
 	{
@@ -169,24 +169,24 @@ std::pair<uint8_t, uint8_t> findOLLType(Cube* cube, COLOR topColor)
 /**
 * Solve OLL cases OCLL3 and OCLL4
 */
-void solveOCLL34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveOCLL34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 3 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, true);
-	FACE oppFace = cube->getRelativeFace(FACE::BACK, "y", 2 + shifts);
+	FACE oppFace = cube.getRelativeFace(FACE::BACK, "y", 2 + shifts);
 	// OCLL3
-	if ((cube->getFace(oppFace) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(oppFace) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: R2 D (R' U2 R) D' (R' U2 R')
-		std::vector<Move> moves = cube->readMoves("R2 D R' U2 R D' R' U2 R'");
+		std::vector<Move> moves = cube.readMoves("R2 D R' U2 R D' R' U2 R'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// OCLL4
@@ -194,14 +194,14 @@ void solveOCLL34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: (r U R' U') (r' F R F')
-		std::vector<Move> moves = cube->readMoves("(r U R' U') (r' F R F')");
+		std::vector<Move> moves = cube.readMoves("(r U R' U') (r' F R F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -209,81 +209,81 @@ void solveOCLL34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 /**
 * Solve OLL case OCLL5
 */
-void solveOCLL5(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveOCLL5(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, false);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 	}
 	// perform OLL: y F' (r U R' U') r' F R
-	std::vector<Move> moves = cube->readMoves("y F' (r U R' U') r' F R");
+	std::vector<Move> moves = cube.readMoves("y F' (r U R' U') r' F R");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL case E1
 */
-void solveE1(Cube* cube, uint8_t shifts, std::vector<Move>& solution)
+void solveE1(Cube& cube, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	if (shifts == 1)
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 	else if (shifts == 2)
-		solution.push_back(cube->move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, "2"));
 	else if (shifts == 3)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// perform OLL: (r U R' U') M (U R U' R')
-	std::vector<Move> moves = cube->readMoves("(r U R' U') M (U R U' R')");
+	std::vector<Move> moves = cube.readMoves("(r U R' U') M (U R U' R')");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL case E2
 */
-void solveE2(Cube* cube, uint8_t shifts, std::vector<Move>& solution)
+void solveE2(Cube& cube, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	if (shifts == 1)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// perform OLL: (R U R' U') M' (U R U' r')
-	std::vector<Move> moves = cube->readMoves("(R U R' U') M' (U R U' r')");
+	std::vector<Move> moves = cube.readMoves("(R U R' U') M' (U R U' r')");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL cases OCLL6 and OCLL7
 */
-void solveOCLL67(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveOCLL67(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 6 or 7
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, false);
-	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::BACK, "y", shifts);
 	// OCLL6
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: R U2 R' U' R U' R'
-		std::vector<Move> moves = cube->readMoves("R U2 R' U' R U' R'");
+		std::vector<Move> moves = cube.readMoves("R U2 R' U' R U' R'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// OCLL7
@@ -291,14 +291,14 @@ void solveOCLL67(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: R U R' U R U2 R'
-		std::vector<Move> moves = cube->readMoves("R U R' U R U2 R'");
+		std::vector<Move> moves = cube.readMoves("R U R' U R U2 R'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -306,7 +306,7 @@ void solveOCLL67(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 /**
 * Solve OLL cases OCLL1 and OCLL2
 */
-void solveOCLL12(Cube* cube, COLOR topColor, std::vector<Move>& solution)
+void solveOCLL12(Cube& cube, COLOR topColor, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, true);
@@ -314,21 +314,21 @@ void solveOCLL12(Cube* cube, COLOR topColor, std::vector<Move>& solution)
 	// find the face with headlights
 	while (true)
 	{
-		if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+		if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 			break;
-		face = cube->getAdjacentFace(face, "y");
+		face = cube.getAdjacentFace(face, "y");
 	}
 	// check if opposite face also has headlights
-	FACE oppFace = cube->getOppositeFace(face);
+	FACE oppFace = cube.getOppositeFace(face);
 	// OCLL1
-	if ((cube->getFace(oppFace) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(oppFace) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (face == FACE::RIGHT || face == FACE::LEFT)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R U2 R') (U' R U R') (U' R U' R')
-		std::vector<Move> moves = cube->readMoves("(R U2 R') (U' R U R') (U' R U' R')");
+		std::vector<Move> moves = cube.readMoves("(R U2 R') (U' R U R') (U' R U' R')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// OCLL2
@@ -336,14 +336,14 @@ void solveOCLL12(Cube* cube, COLOR topColor, std::vector<Move>& solution)
 	{
 		// adjust up face
 		if (face == FACE::BACK)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (face == FACE::RIGHT)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (face == FACE::FRONT)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: R U2 R2 U' R2 U' R2 U2 R
-		std::vector<Move> moves = cube->readMoves("R U2 R2 U' R2 U' R2 U2 R");
+		std::vector<Move> moves = cube.readMoves("R U2 R2 U' R2 U' R2 U2 R");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -351,30 +351,30 @@ void solveOCLL12(Cube* cube, COLOR topColor, std::vector<Move>& solution)
 /**
 * Solve OLL cases T1 and T2
 */
-void solveT12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveT12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 	else if (shifts == 2)
-		solution.push_back(cube->move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, "2"));
 	else if (shifts == 3)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
 	// T1
-	if ((cube->getFace(FACE::FRONT) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(FACE::FRONT) & rowMask.first) == rowMask.second)
 	{
 		// perform OLL: (R U R' U') (R' F R F')
-		std::vector<Move> moves = cube->readMoves("(R U R' U') (R' F R F')");
+		std::vector<Move> moves = cube.readMoves("(R U R' U') (R' F R F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// T2
 	else
 	{
 		// perform OLL: F (R U R' U') F'
-		std::vector<Move> moves = cube->readMoves("F (R U R' U') F'");
+		std::vector<Move> moves = cube.readMoves("F (R U R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -382,24 +382,24 @@ void solveT12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases C1 and C2
 */
-void solveC12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveC12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, true);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// C1
-	if ((cube->getFace(face) & rowMask.first) != rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) != rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 
 		// perform OLL: (R U R2' U') (R' F R U) R U' F'
-		std::vector<Move> moves = cube->readMoves("(R U R2' U') (R' F R U) R U' F'");
+		std::vector<Move> moves = cube.readMoves("(R U R2' U') (R' F R U) R U' F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// C2
@@ -407,14 +407,14 @@ void solveC12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: R' U' (R' F R F') U R
-		std::vector<Move> moves = cube->readMoves("R' U' (R' F R F') U R");
+		std::vector<Move> moves = cube.readMoves("R' U' (R' F R F') U R");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -422,24 +422,24 @@ void solveC12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases W1 and W2
 */
-void solveW12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveW12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, false, true, true);
-	FACE face = cube->getRelativeFace(FACE::RIGHT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::RIGHT, "y", shifts);
 	// W1
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R' U' R U') (R' U R U) l U' R' U x
-		std::vector<Move> moves = cube->readMoves("(R' U' R U') (R' U R U) l U' R' U x");
+		std::vector<Move> moves = cube.readMoves("(R' U' R U') (R' U R U) l U' R' U x");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// W2
@@ -447,14 +447,14 @@ void solveW12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: (R U R' U) (R U' R' U') (R' F R F')
-		std::vector<Move> moves = cube->readMoves("(R U R' U) (R U' R' U') (R' F R F')");
+		std::vector<Move> moves = cube.readMoves("(R U R' U) (R U' R' U') (R' F R F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -462,24 +462,24 @@ void solveW12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases P1 and P3
 */
-void solveP13(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveP13(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 3
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// P1
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R' U' F) (U R U' R') F' R
-		std::vector<Move> moves = cube->readMoves("(R' U' F) (U R U' R') F' R");
+		std::vector<Move> moves = cube.readMoves("(R' U' F) (U R U' R') F' R");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// P3
@@ -487,14 +487,14 @@ void solveP13(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: R' U' F' U F R
-		std::vector<Move> moves = cube->readMoves("R' U' F' U F R");
+		std::vector<Move> moves = cube.readMoves("R' U' F' U F R");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -502,30 +502,30 @@ void solveP13(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases P2 and P4
 */
-void solveP24(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveP24(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 	else if (shifts == 2)
-		solution.push_back(cube->move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, "2"));
 	else if (shifts == 3)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// determine if it's case 2 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, false);
 	// P2
-	if ((cube->getFace(FACE::FRONT) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(FACE::FRONT) & rowMask.first) == rowMask.second)
 	{
 		// perform OLL: R U B' (U' R' U) (R B R')
-		std::vector<Move> moves = cube->readMoves("R U B' (U' R' U) (R B R')");
+		std::vector<Move> moves = cube.readMoves("R U B' (U' R' U) (R B R')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// P4
 	else
 	{
 		// perform OLL: f (R U R' U') f'
-		std::vector<Move> moves = cube->readMoves("f (R U R' U') f'");
+		std::vector<Move> moves = cube.readMoves("f (R U R' U') f'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -533,24 +533,24 @@ void solveP24(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases F3 and F4
 */
-void solveF34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveF34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 3 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// F3
-	if ((cube->getFace(face) & rowMask.first) != rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) != rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 
 		// perform OLL: (R U2') (R2' F R F') (R U2' R')
-		std::vector<Move> moves = cube->readMoves("(R U2') (R2' F R F') (R U2' R')");
+		std::vector<Move> moves = cube.readMoves("(R U2') (R2' F R F') (R U2' R')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// F4
@@ -558,14 +558,14 @@ void solveF34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: F (R U' R' U') (R U R' F')
-		std::vector<Move> moves = cube->readMoves("F (R U' R' U') (R U R' F')");
+		std::vector<Move> moves = cube.readMoves("F (R U' R' U') (R U R' F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -573,24 +573,24 @@ void solveF34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases A1 and A4
 */
-void solveA14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveA14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, true);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// A1
-	if ((cube->getFace(face) & rowMask.first) != rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) != rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: (R U R' U') (R U' R') (F' U' F) (R U R')
-		std::vector<Move> moves = cube->readMoves("(R U R' U') (R U' R') (F' U' F) (R U R')");
+		std::vector<Move> moves = cube.readMoves("(R U R' U') (R U' R') (F' U' F) (R U R')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// A4
@@ -598,14 +598,14 @@ void solveA14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R' U' R U' R' U2R) F (R U R' U') F'
-		std::vector<Move> moves = cube->readMoves("(R' U' R U' R' U2R) F (R U R' U') F'");
+		std::vector<Move> moves = cube.readMoves("(R' U' R U' R' U2R) F (R U R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -613,30 +613,30 @@ void solveA14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases A2 and A3
 */
-void solveA23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveA23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 	else if (shifts == 2)
-		solution.push_back(cube->move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, "2"));
 	else if (shifts == 3)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// determine if it's case 2 or 3
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, false, true);
 	// A2
-	if ((cube->getFace(FACE::BACK) & rowMask.first) != rowMask.second)
+	if ((cube.getFace(FACE::BACK) & rowMask.first) != rowMask.second)
 	{
 		// perform OLL: F U (R U2 R' U') (R U2 R' U') F'
-		std::vector<Move> moves = cube->readMoves("F U (R U2 R' U') (R U2 R' U') F'");
+		std::vector<Move> moves = cube.readMoves("F U (R U2 R' U') (R U2 R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// A3
 	else
 	{
 		// perform OLL: (R U R' U R U2' R') F (R U R' U') F'
-		std::vector<Move> moves = cube->readMoves("(R U R' U R U2' R') F (R U R' U') F'");
+		std::vector<Move> moves = cube.readMoves("(R U R' U R U2' R') F (R U R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -644,86 +644,86 @@ void solveA23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL case B5
 */
-void solveB5(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveB5(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, false, true, true);
-	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	FACE face = cube.getRelativeFace(FACE::BACK, "y", shifts);
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 	}
 
 	// perform OLL: (L F') (L' U' L U) F U' L'
-	std::vector<Move> moves = cube->readMoves("(L F') (L' U' L U) F U' L'");
+	std::vector<Move> moves = cube.readMoves("(L F') (L' U' L U) F U' L'");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL case B6
 */
-void solveB6(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveB6(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
-	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	FACE face = cube.getRelativeFace(FACE::BACK, "y", shifts);
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 	}
 
 	// perform OLL: (R' F) (R U R' U') F' U R
-	std::vector<Move> moves = cube->readMoves("(R' F) (R U R' U') F' U R");
+	std::vector<Move> moves = cube.readMoves("(R' F) (R U R' U') F' U R");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL case O8
 */
-void solveO8(Cube* cube, std::vector<Move>& solution)
+void solveO8(Cube& cube, std::vector<Move>& solution)
 {
 	// perform OLL: M U (R U R' U') M2' (U R U' r')
-	std::vector<Move> moves = cube->readMoves("M U (R U R' U') M2' (U R U' r')");
+	std::vector<Move> moves = cube.readMoves("M U (R U R' U') M2' (U R U' r')");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL cases S1 and S2
 */
-void solveS12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveS12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, false, false, true);
-	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::BACK, "y", shifts);
 	// S1
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: (r' U2' R U R' U r)
-		std::vector<Move> moves = cube->readMoves("(r' U2' R U R' U r)");
+		std::vector<Move> moves = cube.readMoves("(r' U2' R U R' U r)");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// S2
@@ -731,14 +731,14 @@ void solveS12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (r U2 R' U' R U' r')
-		std::vector<Move> moves = cube->readMoves("(r U2 R' U' R U' r')");
+		std::vector<Move> moves = cube.readMoves("(r U2 R' U' R U' r')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -746,24 +746,24 @@ void solveS12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases F1 and F2
 */
-void solveF12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveF12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// F1
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R U R' U') R' F (R2 U R' U') F'
-		std::vector<Move> moves = cube->readMoves("(R U R' U') R' F (R2 U R' U') F'");
+		std::vector<Move> moves = cube.readMoves("(R U R' U') R' F (R2 U R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// F2
@@ -771,14 +771,14 @@ void solveF12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R U R' U) (R' F R F') (R U2' R')
-		std::vector<Move> moves = cube->readMoves("(R U R' U) (R' F R F') (R U2' R')");
+		std::vector<Move> moves = cube.readMoves("(R U R' U) (R' F R F') (R U2' R')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -786,24 +786,24 @@ void solveF12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases K1 and K4
 */
-void solveK14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveK14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, false, true, true);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// K1
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (r U' r') (U' r U r') y' (R'U R)
-		std::vector<Move> moves = cube->readMoves("(r U' r') (U' r U r') y' (R'U R)");
+		std::vector<Move> moves = cube.readMoves("(r U' r') (U' r U r') y' (R'U R)");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// K4
@@ -811,14 +811,14 @@ void solveK14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 
 		// perform OLL: (r U r') (R U R' U') (r U' r')
-		std::vector<Move> moves = cube->readMoves("(r U r') (R U R' U') (r U' r')");
+		std::vector<Move> moves = cube.readMoves("(r U r') (R U R' U') (r U' r')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -826,30 +826,30 @@ void solveK14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases K2 and K3
 */
-void solveK23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveK23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube->move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, "prime"));
 	else if (shifts == 2)
-		solution.push_back(cube->move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, "2"));
 	else if (shifts == 3)
-		solution.push_back(cube->move(FACE::UP));
+		solution.push_back(cube.move(FACE::UP));
 
 	// determine if it's case 2 or 3
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
 	// K2
-	if ((cube->getFace(FACE::FRONT) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(FACE::FRONT) & rowMask.first) == rowMask.second)
 	{
 		// perform OLL: (R' F R) (U R' F' R) (F U' F')
-		std::vector<Move> moves = cube->readMoves("(R' F R) (U R' F' R) (F U' F')");
+		std::vector<Move> moves = cube.readMoves("(R' F R) (U R' F' R) (F U' F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// K3
 	else
 	{
 		// perform OLL: (r' U' r) (R' U' R U) (r' U r)
-		std::vector<Move> moves = cube->readMoves("(r' U' r) (R' U' R U) (r' U r)");
+		std::vector<Move> moves = cube.readMoves("(r' U' r) (R' U' R U) (r' U r)");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -857,24 +857,24 @@ void solveK23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases B1 and B4
 */
-void solveB14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveB14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, false, true, true);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// B1
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (r U R' U R U2' r')
-		std::vector<Move> moves = cube->readMoves("(r U R' U R U2' r')");
+		std::vector<Move> moves = cube.readMoves("(r U R' U R U2' r')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// B4
@@ -882,14 +882,14 @@ void solveB14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: M' (R' U' R U' R' U2 R) U' M
-		std::vector<Move> moves = cube->readMoves("M' (R' U' R U' R' U2 R) U' M");
+		std::vector<Move> moves = cube.readMoves("M' (R' U' R U' R' U2 R) U' M");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -897,24 +897,24 @@ void solveB14(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases B2 and B3
 */
-void solveB23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveB23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 2 or 3
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
-	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::BACK, "y", shifts);
 	// B2
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (r' U' R U' R' U2 r)
-		std::vector<Move> moves = cube->readMoves("(r' U' R U' R' U2 r)");
+		std::vector<Move> moves = cube.readMoves("(r' U' R U' R' U2 r)");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// B3
@@ -922,14 +922,14 @@ void solveB23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: r' (R2 U R' U R U2 R') U M'
-		std::vector<Move> moves = cube->readMoves("r' (R2 U R' U R U2 R') U M'");
+		std::vector<Move> moves = cube.readMoves("r' (R2 U R' U R U2 R') U M'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -937,7 +937,7 @@ void solveB23(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases I1, I2, I3, and I4
 */
-void solveI1234(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveI1234(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1, 2, 3, or 4
 	// search for a continuous bar
@@ -946,30 +946,30 @@ void solveI1234(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 	bool found = false;
 	for (uint8_t i = 0; i < 4; i++)
 	{
-		if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+		if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 		{
 			found = true;
 			break;
 		}
-		face = cube->getAdjacentFace(face, "y");
+		face = cube.getAdjacentFace(face, "y");
 	}
 
 	// I2 or I3
 	if (found)
 	{
 		// I2
-		if ((cube->getFace(cube->getOppositeFace(face)) & rowMask.first) != rowMask.second)
+		if ((cube.getFace(cube.getOppositeFace(face)) & rowMask.first) != rowMask.second)
 		{
 			// adjust up face
 			if (face == FACE::FRONT)
-				solution.push_back(cube->move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, "prime"));
 			else if (face == FACE::BACK)
-				solution.push_back(cube->move(FACE::UP));
+				solution.push_back(cube.move(FACE::UP));
 			else if (face == FACE::LEFT)
-				solution.push_back(cube->move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, "2"));
 
 			// perform OLL: (R' U' R U' R' U) y' (R' U R) B
-			std::vector<Move> moves = cube->readMoves("(R' U' R U' R' U) y' (R' U R) B");
+			std::vector<Move> moves = cube.readMoves("(R' U' R U' R' U) y' (R' U R) B");
 			solution.insert(solution.end(), moves.begin(), moves.end());
 		}
 		// I3
@@ -977,10 +977,10 @@ void solveI1234(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 		{
 			// adjust up face
 			if (shifts == 1)
-				solution.push_back(cube->move(FACE::UP));
+				solution.push_back(cube.move(FACE::UP));
 
 			// perform OLL: (R' F R U) (R U' R2' F') R2 U' R' (U R U R')
-			std::vector<Move> moves = cube->readMoves("(R' F R U) (R U' R2' F') R2 U' R' (U R U R')");
+			std::vector<Move> moves = cube.readMoves("(R' F R U) (R U' R2' F') R2 U' R' (U R U R')");
 			solution.insert(solution.end(), moves.begin(), moves.end());
 		}
 	}
@@ -991,23 +991,23 @@ void solveI1234(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 		rowMask = generateRowMask(topColor, true, false, true);
 		while (true)
 		{
-			if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+			if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 				break;
-			face = cube->getAdjacentFace(face, "y");
+			face = cube.getAdjacentFace(face, "y");
 		}
 		// I1
-		if ((cube->getFace(cube->getOppositeFace(face)) & rowMask.first) != rowMask.second)
+		if ((cube.getFace(cube.getOppositeFace(face)) & rowMask.first) != rowMask.second)
 		{
 			// adjust up face
 			if (face == FACE::FRONT)
-				solution.push_back(cube->move(FACE::UP));
+				solution.push_back(cube.move(FACE::UP));
 			else if (face == FACE::BACK)
-				solution.push_back(cube->move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, "prime"));
 			else if (face == FACE::RIGHT)
-				solution.push_back(cube->move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, "2"));
 
 			// perform OLL: f (R U R' U') (R U R' U') f'
-			std::vector<Move> moves = cube->readMoves("f (R U R' U') (R U R' U') f'");
+			std::vector<Move> moves = cube.readMoves("f (R U R' U') (R U R' U') f'");
 			solution.insert(solution.end(), moves.begin(), moves.end());
 		}
 		// I4
@@ -1015,10 +1015,10 @@ void solveI1234(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 		{
 			// adjust up face
 			if (shifts == 1)
-				solution.push_back(cube->move(FACE::UP));
+				solution.push_back(cube.move(FACE::UP));
 
 			// perform OLL: r' U' r (U' R' U R) (U' R' U R) r' U r
-			std::vector<Move> moves = cube->readMoves("r' U' r (U' R' U R) (U' R' U R) r' U r");
+			std::vector<Move> moves = cube.readMoves("r' U' r (U' R' U R) (U' R' U R) r' U r");
 			solution.insert(solution.end(), moves.begin(), moves.end());
 		}
 	}
@@ -1027,7 +1027,7 @@ void solveI1234(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 /**
 * Solve OLL cases L1, L2, L3, L4, L5, and L6
 */
-void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1, 2, 3, 4, 5, or 6
 	// search for a continuous bar
@@ -1036,12 +1036,12 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 	bool found = false;
 	for (uint8_t i = 0; i < 4; i++)
 	{
-		if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+		if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 		{
 			found = true;
 			break;
 		}
-		face = cube->getAdjacentFace(face, "y");
+		face = cube.getAdjacentFace(face, "y");
 	}
 
 	// L1 or L2
@@ -1051,25 +1051,25 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 		rowMask = generateRowMask(topColor, true, false, true);
 		while (true)
 		{
-			if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+			if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 				break;
-			face = cube->getAdjacentFace(face, "y");
+			face = cube.getAdjacentFace(face, "y");
 		}
 		// determine if it's case 1 or 2
 		rowMask = generateRowMask(topColor, true, true, false);
 		// L1
-		if ((cube->getFace(cube->getAdjacentFace(face, "y")) & rowMask.first) == rowMask.second)
+		if ((cube.getFace(cube.getAdjacentFace(face, "y")) & rowMask.first) == rowMask.second)
 		{
 			// adjust up face
 			if (shifts == 0)
-				solution.push_back(cube->move(FACE::UP));
+				solution.push_back(cube.move(FACE::UP));
 			else if (shifts == 2)
-				solution.push_back(cube->move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, "prime"));
 			else if (shifts == 3)
-				solution.push_back(cube->move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, "2"));
 
 			// perform OLL: F' (L' U' L U) (L' U' L U) F
-			std::vector<Move> moves = cube->readMoves("F' (L' U' L U) (L' U' L U) F");
+			std::vector<Move> moves = cube.readMoves("F' (L' U' L U) (L' U' L U) F");
 			solution.insert(solution.end(), moves.begin(), moves.end());
 		}
 		// L2
@@ -1077,14 +1077,14 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 		{
 			// adjust up face
 			if (shifts == 1)
-				solution.push_back(cube->move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, "prime"));
 			else if (shifts == 2)
-				solution.push_back(cube->move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, "2"));
 			else if (shifts == 3)
-				solution.push_back(cube->move(FACE::UP));
+				solution.push_back(cube.move(FACE::UP));
 
 			// perform OLL: F (R U R' U') (R U R' U') F'
-			std::vector<Move> moves = cube->readMoves("F (R U R' U') (R U R' U') F'");
+			std::vector<Move> moves = cube.readMoves("F (R U R' U') (R U R' U') F'");
 			solution.insert(solution.end(), moves.begin(), moves.end());
 		}
 	}
@@ -1094,23 +1094,23 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 		// check for headlights opposite bar
 		rowMask = generateRowMask(topColor, true, false, true);
 		// L3 and L4
-		if ((cube->getFace(cube->getOppositeFace(face)) & rowMask.first) != rowMask.second)
+		if ((cube.getFace(cube.getOppositeFace(face)) & rowMask.first) != rowMask.second)
 		{
 			// determine if it's case 3 or 4
 			rowMask = generateRowMask(topColor, false, true, true);
 			// L3
-			if ((cube->getFace(cube->getAdjacentFace(face, "yPrime")) & rowMask.first) == rowMask.second)
+			if ((cube.getFace(cube.getAdjacentFace(face, "yPrime")) & rowMask.first) == rowMask.second)
 			{
 				// adjust up face
 				if (shifts == 0)
-					solution.push_back(cube->move(FACE::UP));
+					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 2)
-					solution.push_back(cube->move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, "prime"));
 				else if (shifts == 3)
-					solution.push_back(cube->move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, "2"));
 
 				// perform OLL: r U' r2' U r2 U r2' U' r
-				std::vector<Move> moves = cube->readMoves("r U' r2' U r2 U r2' U' r");
+				std::vector<Move> moves = cube.readMoves("r U' r2' U r2 U r2' U' r");
 				solution.insert(solution.end(), moves.begin(), moves.end());
 			}
 			// L4
@@ -1118,14 +1118,14 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 			{
 				// adjust up face
 				if (shifts == 0)
-					solution.push_back(cube->move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, "2"));
 				else if (shifts == 1)
-					solution.push_back(cube->move(FACE::UP));
+					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 3)
-					solution.push_back(cube->move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, "prime"));
 
 				// perform OLL: r' U r2 U' r2' U' r2 U r'
-				std::vector<Move> moves = cube->readMoves("r' U r2 U' r2' U' r2 U r'");
+				std::vector<Move> moves = cube.readMoves("r' U r2 U' r2' U' r2 U r'");
 				solution.insert(solution.end(), moves.begin(), moves.end());
 			}
 		}
@@ -1135,18 +1135,18 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 			// determine if it's case 5 or 6
 			rowMask = generateRowMask(topColor, false, true, false);
 			// L5
-			if ((cube->getFace(cube->getAdjacentFace(face, "y")) & rowMask.first) == rowMask.second)
+			if ((cube.getFace(cube.getAdjacentFace(face, "y")) & rowMask.first) == rowMask.second)
 			{
 				// adjust up face
 				if (shifts == 0)
-					solution.push_back(cube->move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, "2"));
 				else if (shifts == 1)
-					solution.push_back(cube->move(FACE::UP));
+					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 3)
-					solution.push_back(cube->move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, "prime"));
 
 				// perform OLL: (r' U' R U') (R' U R U') R' U2 r 
-				std::vector<Move> moves = cube->readMoves("(r' U' R U') (R' U R U') R' U2 r");
+				std::vector<Move> moves = cube.readMoves("(r' U' R U') (R' U R U') R' U2 r");
 				solution.insert(solution.end(), moves.begin(), moves.end());
 			}
 			// L6
@@ -1154,14 +1154,14 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 			{
 				// adjust up face
 				if (shifts == 0)
-					solution.push_back(cube->move(FACE::UP));
+					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 2)
-					solution.push_back(cube->move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, "prime"));
 				else if (shifts == 3)
-					solution.push_back(cube->move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, "2"));
 
 				// perform OLL: (r U R' U) (R U' R' U) R U2' r' 
-				std::vector<Move> moves = cube->readMoves("(r U R' U) (R U' R' U) R U2' r'");
+				std::vector<Move> moves = cube.readMoves("(r U R' U) (R U' R' U) R U2' r'");
 				solution.insert(solution.end(), moves.begin(), moves.end());
 			}
 		}
@@ -1171,24 +1171,24 @@ void solveL123456(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 /**
 * Solve OLL cases O6 and O7
 */
-void solveO67(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveO67(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 6 or 7
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, true);
-	FACE face = cube->getRelativeFace(FACE::FRONT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::FRONT, "y", shifts);
 	// O6
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: R U2' (R2' F R F') U2' M' (U R U' r') 
-		std::vector<Move> moves = cube->readMoves("R U2' (R2' F R F') U2' M' (U R U' r') ");
+		std::vector<Move> moves = cube.readMoves("R U2' (R2' F R F') U2' M' (U R U' r') ");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// O7
@@ -1196,14 +1196,14 @@ void solveO67(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: M U (R U R' U') M' (R' F R F')
-		std::vector<Move> moves = cube->readMoves("M U (R U R' U') M' (R' F R F')");
+		std::vector<Move> moves = cube.readMoves("M U (R U R' U') M' (R' F R F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -1211,50 +1211,50 @@ void solveO67(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL case O5
 */
-void solveO5(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveO5(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, false);
-	FACE face = cube->getRelativeFace(FACE::BACK, "y", shifts);
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	FACE face = cube.getRelativeFace(FACE::BACK, "y", shifts);
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 	}
 
 	// perform OLL: (R U R' U) (R' F R F') U2' (R' F R F')
-	std::vector<Move> moves = cube->readMoves("(R U R' U) (R' F R F') U2' (R' F R F')");
+	std::vector<Move> moves = cube.readMoves("(R U R' U) (R' F R F') U2' (R' F R F')");
 	solution.insert(solution.end(), moves.begin(), moves.end());
 }
 
 /**
 * Solve OLL cases O3 and O4
 */
-void solveO34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveO34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 3 or 4
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, false, true, true);
-	FACE face = cube->getRelativeFace(FACE::LEFT, "y", shifts);
+	FACE face = cube.getRelativeFace(FACE::LEFT, "y", shifts);
 	// O3
-	if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 		else if (shifts == 1)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 
 		// perform OLL: f (R U R' U') f' U' F (R U R' U') F' 
-		std::vector<Move> moves = cube->readMoves("f (R U R' U') f' U' F (R U R' U') F'");
+		std::vector<Move> moves = cube.readMoves("f (R U R' U') f' U' F (R U R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// O4
@@ -1262,14 +1262,14 @@ void solveO34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (shifts == 3)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: f (R U R' U') f' U F (R U R' U') F'
-		std::vector<Move> moves = cube->readMoves("f (R U R' U') f' U F (R U R' U') F'");
+		std::vector<Move> moves = cube.readMoves("f (R U R' U') f' U F (R U R' U') F'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -1277,26 +1277,26 @@ void solveO34(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 /**
 * Solve OLL cases O1 and O2
 */
-void solveO12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
+void solveO12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solution)
 {
 	// determine if it's case 1 or 2
 	std::pair<uint64_t, uint64_t> rowMask = generateRowMask(topColor, true, true, true);
 	FACE face = FACE::FRONT;
 	while (true)
 	{
-		if ((cube->getFace(face) & rowMask.first) == rowMask.second)
+		if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 			break;
-		face = cube->getAdjacentFace(face, "y");
+		face = cube.getAdjacentFace(face, "y");
 	}
 	// O1
-	if ((cube->getFace(cube->getOppositeFace(face)) & rowMask.first) == rowMask.second)
+	if ((cube.getFace(cube.getOppositeFace(face)) & rowMask.first) == rowMask.second)
 	{
 		// adjust up face
 		if (face == FACE::FRONT || face == FACE::BACK)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 
 		// perform OLL: (R U2') (R2' F R F') U2' (R' F R F')
-		std::vector<Move> moves = cube->readMoves("(R U2') (R2' F R F') U2' (R' F R F')");
+		std::vector<Move> moves = cube.readMoves("(R U2') (R2' F R F') U2' (R' F R F')");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 	// O2
@@ -1304,14 +1304,14 @@ void solveO12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (face == FACE::FRONT)
-			solution.push_back(cube->move(FACE::UP));
+			solution.push_back(cube.move(FACE::UP));
 		else if (face == FACE::BACK)
-			solution.push_back(cube->move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, "prime"));
 		else if (face == FACE::RIGHT)
-			solution.push_back(cube->move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, "2"));
 
 		// perform OLL: F (R U R' U') F' f (R U R' U') f'
-		std::vector<Move> moves = cube->readMoves("F (R U R' U') F' f (R U R' U') f'");
+		std::vector<Move> moves = cube.readMoves("F (R U R' U') F' f (R U R' U') f'");
 		solution.insert(solution.end(), moves.begin(), moves.end());
 	}
 }
@@ -1322,16 +1322,16 @@ void solveO12(Cube* cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 * Assumes the first two layers are solved and that
 * the cross color is oriented down.
 */
-void solveOLL(Cube* cube, std::vector<Move>& solution)
+void solveOLL(Cube& cube, std::vector<Move>& solution)
 {
 	// get the color of the top face
-	COLOR topColor = cube->getCenter(FACE::UP);
+	COLOR topColor = cube.getCenter(FACE::UP);
 
 	// first check that OLL isn't already solved
 	bool solved = true;
 	for (uint8_t i = 0; i < 8; i++)
 	{
-		if (cube->getSticker({ FACE::UP, i }) != topColor)
+		if (cube.getSticker({ FACE::UP, i }) != topColor)
 		{
 			solved = false;
 			break;
