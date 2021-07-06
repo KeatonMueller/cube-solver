@@ -47,9 +47,9 @@ LOCATION bringCornerToTop(Cube& cube, LOCATION piece, std::vector<Move>& solutio
 			// turn the adjacent face clockwise
 			solution.push_back(cube.move(adj.face));
 			// turn up face counter clockwise
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 			// turn the adjacent face counter clockwise
-			solution.push_back(cube.move(adj.face, "prime"));
+			solution.push_back(cube.move(adj.face, Move::TYPE::PRIME));
 			// update new location
 			piece.face = adj.face;
 			piece.idx = 0;
@@ -60,9 +60,9 @@ LOCATION bringCornerToTop(Cube& cube, LOCATION piece, std::vector<Move>& solutio
 			if (piece.idx == 4)
 			{
 				// turn face counter clockwise
-				solution.push_back(cube.move(piece.face, "prime"));
+				solution.push_back(cube.move(piece.face, Move::TYPE::PRIME));
 				// turn up face counter clockwise
-				solution.push_back(cube.move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 				// turn face clockwise
 				solution.push_back(cube.move(piece.face));
 				// find piece's new location
@@ -77,7 +77,7 @@ LOCATION bringCornerToTop(Cube& cube, LOCATION piece, std::vector<Move>& solutio
 				// turn up face clockwise
 				solution.push_back(cube.move(FACE::UP));
 				// turn face counter clockwise
-				solution.push_back(cube.move(piece.face, "prime"));
+				solution.push_back(cube.move(piece.face, Move::TYPE::PRIME));
 				// find piece's new location
 				std::pair<LOCATION, LOCATION> adj = cube.getAdjacentCorner(piece);
 				piece.face = adj.second.face;
@@ -178,9 +178,9 @@ void insertCorner(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 		// turn up face twice
 		solution.push_back(cube.parseMove("U2"));
 		// turn adjacent face counter clockwise
-		solution.push_back(cube.move(adj.face, "prime"));
+		solution.push_back(cube.move(adj.face, Move::TYPE::PRIME));
 		// turn up face counter clockwise
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		// now piece is in an easier case, so recurse
 		insertCorner(cube, { adj.face, 0 }, solution);
 	}
@@ -192,15 +192,15 @@ void insertCorner(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 		// turn up face clockwise
 		solution.push_back(cube.move(FACE::UP));
 		// turn face counter clockwise
-		solution.push_back(cube.move(piece.face, "prime"));
+		solution.push_back(cube.move(piece.face, Move::TYPE::PRIME));
 	}
 	// if cross color is in position 2
 	else if (piece.idx == 2)
 	{
 		// turn face counter clockwise
-		solution.push_back(cube.move(piece.face, "prime"));
+		solution.push_back(cube.move(piece.face, Move::TYPE::PRIME));
 		// turn up face counter clockwise
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		// turn face clockwise
 		solution.push_back(cube.move(piece.face));
 	}

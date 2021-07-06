@@ -56,11 +56,11 @@ LOCATION bring2LEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& so
 		// right sexy move
 		solution.push_back(cube.move(rightFace));
 		solution.push_back(cube.move(FACE::UP));
-		solution.push_back(cube.move(rightFace, "prime"));
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(rightFace, Move::TYPE::PRIME));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		// left sexy move (mostly)
-		solution.push_back(cube.move(leftFace, "prime"));
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(leftFace, Move::TYPE::PRIME));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		solution.push_back(cube.move(leftFace));
 
 		// location is now idx 1 of face opposite leftFace
@@ -125,24 +125,24 @@ void insert2LEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 	{
 		solution.push_back(cube.move(FACE::UP));
 		solution.push_back(cube.move(rightFace));
-		solution.push_back(cube.move(FACE::UP, "prime"));
-		solution.push_back(cube.move(rightFace, "prime"));
-		solution.push_back(cube.move(FACE::UP, "prime"));
-		solution.push_back(cube.move(sidePiece.face, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
+		solution.push_back(cube.move(rightFace, Move::TYPE::PRIME));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
+		solution.push_back(cube.move(sidePiece.face, Move::TYPE::PRIME));
 		solution.push_back(cube.move(FACE::UP));
 		solution.push_back(cube.move(sidePiece.face));
 	}
 	// insert to the left
 	else if (cube.getCenter(leftFace) == cube.getSticker(topPiece))
 	{
-		solution.push_back(cube.move(FACE::UP, "prime"));
-		solution.push_back(cube.move(leftFace, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
+		solution.push_back(cube.move(leftFace, Move::TYPE::PRIME));
 		solution.push_back(cube.move(FACE::UP));
 		solution.push_back(cube.move(leftFace));
 		solution.push_back(cube.move(FACE::UP));
 		solution.push_back(cube.move(sidePiece.face));
-		solution.push_back(cube.move(FACE::UP, "prime"));
-		solution.push_back(cube.move(sidePiece.face, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
+		solution.push_back(cube.move(sidePiece.face, Move::TYPE::PRIME));
 	}
 }
 

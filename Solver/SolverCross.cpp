@@ -48,14 +48,14 @@ LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solu
 		if (piece.face != FACE::DOWN)
 		{
 			// twist its face twice
-			solution.push_back(cube.move(piece.face, "2"));
+			solution.push_back(cube.move(piece.face, Move::TYPE::DOUBLE));
 			return { piece.face, 1 };
 		}
 		// piece is in bottom layer facing the bottom
 		else
 		{
 			// twist the adjacent face twice
-			solution.push_back(cube.move(cube.getAdjacentEdge(piece).face, "2"));
+			solution.push_back(cube.move(cube.getAdjacentEdge(piece).face, Move::TYPE::DOUBLE));
 			uint8_t newIdx = (piece.idx == 3 || piece.idx == 7) ? piece.idx : 6 - piece.idx;
 			return { FACE::UP, newIdx };
 		}
@@ -67,7 +67,7 @@ LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solu
 		// bring it to the top such that white is facing up
 		if (adj.idx == 3)
 		{
-			solution.push_back(cube.move(adj.face, "prime"));
+			solution.push_back(cube.move(adj.face, Move::TYPE::PRIME));
 			solution.push_back(cube.move(FACE::UP));
 			solution.push_back(cube.move(adj.face));
 		}
@@ -75,7 +75,7 @@ LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solu
 		{
 			solution.push_back(cube.move(adj.face));
 			solution.push_back(cube.move(FACE::UP));
-			solution.push_back(cube.move(adj.face, "prime"));
+			solution.push_back(cube.move(adj.face, Move::TYPE::PRIME));
 		}
 		// determine the new position of the piece
 		uint8_t newIdx = 0;
@@ -161,16 +161,16 @@ void insertCrossEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 	if (piece.face == FACE::UP)
 	{
 		// turn adjacent side twice
-		solution.push_back(cube.move(cube.getAdjacentEdge(piece).face, "2"));
+		solution.push_back(cube.move(cube.getAdjacentEdge(piece).face, Move::TYPE::DOUBLE));
 	}
 	// white is facing to the side
 	else
 	{
 		// turn the up face counter clockwise
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		// turn the face to the right counter clockwise
 		FACE adjFace = cube.getAdjacentEdge({ piece.face, 3 }).face;
-		solution.push_back(cube.move(adjFace, "prime"));
+		solution.push_back(cube.move(adjFace, Move::TYPE::PRIME));
 		// turn piece's face clockwise
 		solution.push_back(cube.move(piece.face));
 		// undo the adjacent face's turn

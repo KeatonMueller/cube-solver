@@ -307,9 +307,9 @@ void solvePLL(Cube& cube, std::vector<Move>& solution)
 
 	// adjust up face
 	if (pll.second == 1)
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	else if (pll.second == 2)
-		solution.push_back(cube.move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 	else if (pll.second == 3)
 		solution.push_back(cube.move(FACE::UP));
 

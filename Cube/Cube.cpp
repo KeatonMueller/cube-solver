@@ -363,7 +363,7 @@ std::pair<Cube::LOCATION, Cube::LOCATION> Cube::getAdjacentCorner(LOCATION loc)
 *
 * Return a Move object corresponding to the move performed.
 */
-Move Cube::move(FACE face, const std::string& type)
+Move Cube::move(FACE face, Move::TYPE type)
 {
 	// get the string of the requested face
 	std::string move = "";
@@ -390,11 +390,11 @@ Move Cube::move(FACE face, const std::string& type)
 	}
 
 	// parse move based on type
-	if (type == "")
+	if (type == Move::TYPE::NORMAL)
 		return parseMove(move);
-	else if (type == "prime")
+	else if (type == Move::TYPE::PRIME)
 		return parseMove(move + "\'");
-	else if (type == "2")
+	else if (type == Move::TYPE::DOUBLE)
 		return parseMove(move + "2");
 
 	// invalid move

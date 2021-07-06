@@ -96,7 +96,7 @@ public:
 	LOCATION getAdjacentEdge(LOCATION loc);
 	std::pair<LOCATION, LOCATION> getAdjacentCorner(LOCATION loc);
 
-	Move move(FACE face, const std::string& type = "");
+	Move move(FACE face, Move::TYPE type = Move::TYPE::NORMAL);
 	bool isPieceSolved(LOCATION loc);
 
 	void printLocation(LOCATION loc);

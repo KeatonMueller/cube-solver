@@ -179,9 +179,9 @@ void solveOCLL34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -196,9 +196,9 @@ void solveOCLL34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: (r U R' U') (r' F R F')
 		std::vector<Move> moves = cube.readMoves("(r U R' U') (r' F R F')");
@@ -217,12 +217,12 @@ void solveOCLL5(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 	}
@@ -238,9 +238,9 @@ void solveE1(Cube& cube, uint8_t shifts, std::vector<Move>& solution)
 {
 	// adjust up face
 	if (shifts == 1)
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	else if (shifts == 2)
-		solution.push_back(cube.move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 	else if (shifts == 3)
 		solution.push_back(cube.move(FACE::UP));
 
@@ -278,9 +278,9 @@ void solveOCLL67(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: R U2 R' U' R U' R'
 		std::vector<Move> moves = cube.readMoves("R U2 R' U' R U' R'");
@@ -291,9 +291,9 @@ void solveOCLL67(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& 
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 2)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -336,9 +336,9 @@ void solveOCLL12(Cube& cube, COLOR topColor, std::vector<Move>& solution)
 	{
 		// adjust up face
 		if (face == FACE::BACK)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (face == FACE::RIGHT)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (face == FACE::FRONT)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -355,9 +355,9 @@ void solveT12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	else if (shifts == 2)
-		solution.push_back(cube.move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 	else if (shifts == 3)
 		solution.push_back(cube.move(FACE::UP));
 
@@ -392,11 +392,11 @@ void solveC12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 
 		// perform OLL: (R U R2' U') (R' F R U) R U' F'
 		std::vector<Move> moves = cube.readMoves("(R U R2' U') (R' F R U) R U' F'");
@@ -407,9 +407,9 @@ void solveC12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 2)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -432,9 +432,9 @@ void solveW12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -449,9 +449,9 @@ void solveW12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: (R U R' U) (R U' R' U') (R' F R F')
 		std::vector<Move> moves = cube.readMoves("(R U R' U) (R U' R' U') (R' F R F')");
@@ -472,9 +472,9 @@ void solveP13(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -487,9 +487,9 @@ void solveP13(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 2)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -506,9 +506,9 @@ void solveP24(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	else if (shifts == 2)
-		solution.push_back(cube.move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 	else if (shifts == 3)
 		solution.push_back(cube.move(FACE::UP));
 
@@ -543,11 +543,11 @@ void solveF34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 
 		// perform OLL: (R U2') (R2' F R F') (R U2' R')
 		std::vector<Move> moves = cube.readMoves("(R U2') (R2' F R F') (R U2' R')");
@@ -558,9 +558,9 @@ void solveF34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -585,9 +585,9 @@ void solveA14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: (R U R' U') (R U' R') (F' U' F) (R U R')
 		std::vector<Move> moves = cube.readMoves("(R U R' U') (R U' R') (F' U' F) (R U R')");
@@ -598,9 +598,9 @@ void solveA14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -617,9 +617,9 @@ void solveA23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	else if (shifts == 2)
-		solution.push_back(cube.move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 	else if (shifts == 3)
 		solution.push_back(cube.move(FACE::UP));
 
@@ -652,12 +652,12 @@ void solveB5(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solu
 	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 	}
@@ -678,12 +678,12 @@ void solveB6(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solu
 	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 	}
@@ -718,9 +718,9 @@ void solveS12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: (r' U2' R U R' U r)
 		std::vector<Move> moves = cube.readMoves("(r' U2' R U R' U r)");
@@ -731,9 +731,9 @@ void solveS12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -756,9 +756,9 @@ void solveF12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -771,9 +771,9 @@ void solveF12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 2)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -796,9 +796,9 @@ void solveK14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -811,11 +811,11 @@ void solveK14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 
 		// perform OLL: (r U r') (R U R' U') (r U' r')
 		std::vector<Move> moves = cube.readMoves("(r U r') (R U R' U') (r U' r')");
@@ -830,9 +830,9 @@ void solveK23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 {
 	// adjust up face (same for both cases)
 	if (shifts == 1)
-		solution.push_back(cube.move(FACE::UP, "prime"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	else if (shifts == 2)
-		solution.push_back(cube.move(FACE::UP, "2"));
+		solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 	else if (shifts == 3)
 		solution.push_back(cube.move(FACE::UP));
 
@@ -867,9 +867,9 @@ void solveB14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -884,9 +884,9 @@ void solveB14(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: M' (R' U' R U' R' U2 R) U' M
 		std::vector<Move> moves = cube.readMoves("M' (R' U' R U' R' U2 R) U' M");
@@ -907,9 +907,9 @@ void solveB23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -922,9 +922,9 @@ void solveB23(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 2)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -962,11 +962,11 @@ void solveI1234(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 		{
 			// adjust up face
 			if (face == FACE::FRONT)
-				solution.push_back(cube.move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 			else if (face == FACE::BACK)
 				solution.push_back(cube.move(FACE::UP));
 			else if (face == FACE::LEFT)
-				solution.push_back(cube.move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 			// perform OLL: (R' U' R U' R' U) y' (R' U R) B
 			std::vector<Move> moves = cube.readMoves("(R' U' R U' R' U) y' (R' U R) B");
@@ -1002,9 +1002,9 @@ void solveI1234(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& s
 			if (face == FACE::FRONT)
 				solution.push_back(cube.move(FACE::UP));
 			else if (face == FACE::BACK)
-				solution.push_back(cube.move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 			else if (face == FACE::RIGHT)
-				solution.push_back(cube.move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 			// perform OLL: f (R U R' U') (R U R' U') f'
 			std::vector<Move> moves = cube.readMoves("f (R U R' U') (R U R' U') f'");
@@ -1064,9 +1064,9 @@ void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 			if (shifts == 0)
 				solution.push_back(cube.move(FACE::UP));
 			else if (shifts == 2)
-				solution.push_back(cube.move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 			else if (shifts == 3)
-				solution.push_back(cube.move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 			// perform OLL: F' (L' U' L U) (L' U' L U) F
 			std::vector<Move> moves = cube.readMoves("F' (L' U' L U) (L' U' L U) F");
@@ -1077,9 +1077,9 @@ void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 		{
 			// adjust up face
 			if (shifts == 1)
-				solution.push_back(cube.move(FACE::UP, "prime"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 			else if (shifts == 2)
-				solution.push_back(cube.move(FACE::UP, "2"));
+				solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 			else if (shifts == 3)
 				solution.push_back(cube.move(FACE::UP));
 
@@ -1105,9 +1105,9 @@ void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 				if (shifts == 0)
 					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 2)
-					solution.push_back(cube.move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 				else if (shifts == 3)
-					solution.push_back(cube.move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 				// perform OLL: r U' r2' U r2 U r2' U' r
 				std::vector<Move> moves = cube.readMoves("r U' r2' U r2 U r2' U' r");
@@ -1118,11 +1118,11 @@ void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 			{
 				// adjust up face
 				if (shifts == 0)
-					solution.push_back(cube.move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 				else if (shifts == 1)
 					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 3)
-					solution.push_back(cube.move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 
 				// perform OLL: r' U r2 U' r2' U' r2 U r'
 				std::vector<Move> moves = cube.readMoves("r' U r2 U' r2' U' r2 U r'");
@@ -1139,11 +1139,11 @@ void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 			{
 				// adjust up face
 				if (shifts == 0)
-					solution.push_back(cube.move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 				else if (shifts == 1)
 					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 3)
-					solution.push_back(cube.move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 
 				// perform OLL: (r' U' R U') (R' U R U') R' U2 r 
 				std::vector<Move> moves = cube.readMoves("(r' U' R U') (R' U R U') R' U2 r");
@@ -1156,9 +1156,9 @@ void solveL123456(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>&
 				if (shifts == 0)
 					solution.push_back(cube.move(FACE::UP));
 				else if (shifts == 2)
-					solution.push_back(cube.move(FACE::UP, "prime"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 				else if (shifts == 3)
-					solution.push_back(cube.move(FACE::UP, "2"));
+					solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 				// perform OLL: (r U R' U) (R U' R' U) R U2' r' 
 				std::vector<Move> moves = cube.readMoves("(r U R' U) (R U' R' U) R U2' r'");
@@ -1183,9 +1183,9 @@ void solveO67(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: R U2' (R2' F R F') U2' M' (U R U' r') 
 		std::vector<Move> moves = cube.readMoves("R U2' (R2' F R F') U2' M' (U R U' r') ");
@@ -1196,9 +1196,9 @@ void solveO67(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 3)
 			solution.push_back(cube.move(FACE::UP));
 
@@ -1219,12 +1219,12 @@ void solveO5(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& solu
 	if ((cube.getFace(face) & rowMask.first) == rowMask.second)
 	{
 		if (shifts == 1)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 	}
 	else
 	{
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 	}
@@ -1247,11 +1247,11 @@ void solveO34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 	{
 		// adjust up face
 		if (shifts == 0)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 		else if (shifts == 1)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 
 		// perform OLL: f (R U R' U') f' U' F (R U R' U') F' 
 		std::vector<Move> moves = cube.readMoves("f (R U R' U') f' U' F (R U R' U') F'");
@@ -1264,9 +1264,9 @@ void solveO34(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (shifts == 0)
 			solution.push_back(cube.move(FACE::UP));
 		else if (shifts == 2)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (shifts == 3)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: f (R U R' U') f' U F (R U R' U') F'
 		std::vector<Move> moves = cube.readMoves("f (R U R' U') f' U F (R U R' U') F'");
@@ -1306,9 +1306,9 @@ void solveO12(Cube& cube, COLOR topColor, uint8_t shifts, std::vector<Move>& sol
 		if (face == FACE::FRONT)
 			solution.push_back(cube.move(FACE::UP));
 		else if (face == FACE::BACK)
-			solution.push_back(cube.move(FACE::UP, "prime"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::PRIME));
 		else if (face == FACE::RIGHT)
-			solution.push_back(cube.move(FACE::UP, "2"));
+			solution.push_back(cube.move(FACE::UP, Move::TYPE::DOUBLE));
 
 		// perform OLL: F (R U R' U') F' f (R U R' U') f'
 		std::vector<Move> moves = cube.readMoves("F (R U R' U') F' f (R U R' U') f'");
