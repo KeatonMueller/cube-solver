@@ -55,7 +55,7 @@ LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solu
 		else
 		{
 			// twist the adjacent face twice
-			solution.push_back(cube.move(cube.getAdjacentEdge(piece).first.face, "2"));
+			solution.push_back(cube.move(cube.getAdjacentEdge(piece).face, "2"));
 			uint8_t newIdx = (piece.idx == 3 || piece.idx == 7) ? piece.idx : 6 - piece.idx;
 			return { FACE::UP, newIdx };
 		}
@@ -63,7 +63,7 @@ LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solu
 	else
 	{
 		// piece is somewhere in the middle
-		LOCATION adj = cube.getAdjacentEdge(piece).first;
+		LOCATION adj = cube.getAdjacentEdge(piece);
 		// bring it to the top such that white is facing up
 		if (adj.idx == 3)
 		{
@@ -112,7 +112,7 @@ LOCATION moveEdgeOverCenter(Cube& cube, LOCATION piece, std::vector<Move>& solut
 	// if cross color is facing up
 	if (piece.face == FACE::UP)
 	{
-		LOCATION adj = cube.getAdjacentEdge(piece).first;
+		LOCATION adj = cube.getAdjacentEdge(piece);
 
 		// turn the up face until the edge sticker is aligned
 		// could optimize this so U3 isn't possible in the future
@@ -120,14 +120,14 @@ LOCATION moveEdgeOverCenter(Cube& cube, LOCATION piece, std::vector<Move>& solut
 		{
 			cube.u();
 			piece.idx = (piece.idx + 2) % 8;
-			adj = cube.getAdjacentEdge(piece).first;
+			adj = cube.getAdjacentEdge(piece);
 			moves++;
 		}
 	}
 	// if cross color is facing out
 	else
 	{
-		COLOR targetColor = cube.getSticker(cube.getAdjacentEdge(piece).first);
+		COLOR targetColor = cube.getSticker(cube.getAdjacentEdge(piece));
 		while (targetColor != cube.getCenter(piece.face))
 		{
 			cube.u();
@@ -161,7 +161,7 @@ void insertCrossEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 	if (piece.face == FACE::UP)
 	{
 		// turn adjacent side twice
-		solution.push_back(cube.move(cube.getAdjacentEdge(piece).first.face, "2"));
+		solution.push_back(cube.move(cube.getAdjacentEdge(piece).face, "2"));
 	}
 	// white is facing to the side
 	else
@@ -169,7 +169,7 @@ void insertCrossEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 		// turn the up face counter clockwise
 		solution.push_back(cube.move(FACE::UP, "prime"));
 		// turn the face to the right counter clockwise
-		FACE adjFace = cube.getAdjacentEdge({ piece.face, 3 }).first.face;
+		FACE adjFace = cube.getAdjacentEdge({ piece.face, 3 }).face;
 		solution.push_back(cube.move(adjFace, "prime"));
 		// turn piece's face clockwise
 		solution.push_back(cube.move(piece.face));

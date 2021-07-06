@@ -181,14 +181,13 @@ Cube::COLOR Cube::getSticker(LOCATION l)
 /**
 * Return the location of the sticker adjacent to the given location.
 *
-* If a non-edge location is supplied, the second return value is set
-* to false, otherwise it is true indicating a successful execution.
+* Given location value is assumed to be an edge
 */
-std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION loc)
+Cube::LOCATION Cube::getAdjacentEdge(LOCATION loc)
 {
 	// fail if provided location isn't an edge
 	if (loc.idx % 2 == 0)
-		return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		return { (FACE)6, 8 };
 
 	switch (loc.face)
 	{
@@ -196,88 +195,77 @@ std::pair<Cube::LOCATION, bool> Cube::getAdjacentEdge(LOCATION loc)
 		switch (loc.idx)
 		{
 		case 1:
-			return std::make_pair(LOCATION({ FACE::BACK, 1 }), true);
+			return { FACE::BACK, 1 };
 		case 3:
-			return std::make_pair(LOCATION({ FACE::RIGHT, 1 }), true);
+			return { FACE::RIGHT, 1 };
 		case 5:
-			return std::make_pair(LOCATION({ FACE::FRONT , 1 }), true);
+			return { FACE::FRONT , 1 };
 		case 7:
-			return std::make_pair(LOCATION({ FACE::LEFT, 1 }), true);
-		default:
-			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+			return { FACE::LEFT, 1 };
 		}
 	case (FACE::DOWN):
 		switch (loc.idx)
 		{
 		case 1:
-			return std::make_pair(LOCATION({ FACE::FRONT, 5 }), true);
+			return { FACE::FRONT, 5 };
 		case 3:
-			return std::make_pair(LOCATION({ FACE::RIGHT, 5 }), true);
+			return { FACE::RIGHT, 5 };
 		case 5:
-			return std::make_pair(LOCATION({ FACE::BACK , 5 }), true);
+			return { FACE::BACK , 5 };
 		case 7:
-			return std::make_pair(LOCATION({ FACE::LEFT, 5 }), true);
-		default:
-			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+			return { FACE::LEFT, 5 };
 		}
 	case (FACE::FRONT):
 		switch (loc.idx)
 		{
 		case 1:
-			return std::make_pair(LOCATION({ FACE::UP, 5 }), true);
+			return { FACE::UP, 5 };
 		case 3:
-			return std::make_pair(LOCATION({ FACE::RIGHT, 7 }), true);
+			return { FACE::RIGHT, 7 };
 		case 5:
-			return std::make_pair(LOCATION({ FACE::DOWN , 1 }), true);
+			return { FACE::DOWN , 1 };
 		case 7:
-			return std::make_pair(LOCATION({ FACE::LEFT, 3 }), true);
-		default:
-			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+			return { FACE::LEFT, 3 };
 		}
 	case (FACE::BACK):
 		switch (loc.idx)
 		{
 		case 1:
-			return std::make_pair(LOCATION({ FACE::UP, 1 }), true);
+			return { FACE::UP, 1 };
 		case 3:
-			return std::make_pair(LOCATION({ FACE::LEFT, 7 }), true);
+			return { FACE::LEFT, 7 };
 		case 5:
-			return std::make_pair(LOCATION({ FACE::DOWN , 5 }), true);
+			return { FACE::DOWN , 5 };
 		case 7:
-			return std::make_pair(LOCATION({ FACE::RIGHT, 3 }), true);
-		default:
-			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+			return { FACE::RIGHT, 3 };
 		}
 	case (FACE::RIGHT):
 		switch (loc.idx)
 		{
 		case 1:
-			return std::make_pair(LOCATION({ FACE::UP, 3 }), true);
+			return { FACE::UP, 3 };
 		case 3:
-			return std::make_pair(LOCATION({ FACE::BACK, 7 }), true);
+			return { FACE::BACK, 7 };
 		case 5:
-			return std::make_pair(LOCATION({ FACE::DOWN , 3 }), true);
+			return { FACE::DOWN , 3 };
 		case 7:
-			return std::make_pair(LOCATION({ FACE::FRONT, 3 }), true);
-		default:
-			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+			return { FACE::FRONT, 3 };
 		}
 	case (FACE::LEFT):
 		switch (loc.idx)
 		{
 		case 1:
-			return std::make_pair(LOCATION({ FACE::UP, 7 }), true);
+			return { FACE::UP, 7 };
 		case 3:
-			return std::make_pair(LOCATION({ FACE::FRONT, 7 }), true);
+			return { FACE::FRONT, 7 };
 		case 5:
-			return std::make_pair(LOCATION({ FACE::DOWN , 7 }), true);
+			return { FACE::DOWN , 7 };
 		case 7:
-			return std::make_pair(LOCATION({ FACE::BACK, 3 }), true);
-		default:
-			return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+			return { FACE::BACK, 3 };
 		}
 	default:
-		return std::make_pair(LOCATION({ (FACE)0, 0 }), false);
+		// non-edge supplied; behavior undefined
+		return { (FACE)0, 0 };
 	}
 }
 
@@ -433,12 +421,10 @@ bool Cube::isEdgeSolved(LOCATION loc)
 		return false;
 
 	// get the adjacent edge sticker
-	std::pair<LOCATION, bool> adj = getAdjacentEdge(loc);
-	if (!adj.second)
-		return false;
+	LOCATION adj = getAdjacentEdge(loc);
 
-	// solved if adjacent sticker is matches as well
-	return getCenter(adj.first.face) == getSticker(adj.first);
+	// solved if adjacent sticker matches its center as well
+	return getCenter(adj.face) == getSticker(adj);
 }
 
 /**

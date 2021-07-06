@@ -25,7 +25,7 @@ std::pair<LOCATION, bool> findUnsolved2LEdge(Cube& cube, COLOR color)
 				continue;
 			// piece must not have provided color, and it must be unsolved
 			if (cube.getSticker({ (FACE)face, idx }) != color
-				&& cube.getSticker(cube.getAdjacentEdge({ (FACE)face, idx }).first) != color
+				&& cube.getSticker(cube.getAdjacentEdge({ (FACE)face, idx })) != color
 				&& !cube.isPieceSolved({ (FACE)face, idx }))
 				return std::make_pair(LOCATION({ (FACE)face, idx }), true);
 		}
@@ -50,8 +50,8 @@ LOCATION bring2LEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& so
 	else if (layer == LAYER::MIDDLE)
 	{
 		// identify both stickers
-		FACE leftFace = piece.idx == 3 ? piece.face : cube.getAdjacentEdge(piece).first.face;
-		FACE rightFace = piece.idx == 7 ? piece.face : cube.getAdjacentEdge(piece).first.face;
+		FACE leftFace = piece.idx == 3 ? piece.face : cube.getAdjacentEdge(piece).face;
+		FACE rightFace = piece.idx == 7 ? piece.face : cube.getAdjacentEdge(piece).face;
 
 		// right sexy move
 		solution.push_back(cube.move(rightFace));
@@ -82,8 +82,8 @@ LOCATION bring2LEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& so
 LOCATION align2LEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// ensure we're working with the outer edge
-	COLOR toMatch = piece.face != FACE::UP ? cube.getSticker(piece) : cube.getSticker(cube.getAdjacentEdge(piece).first);
-	FACE currFace = piece.face != FACE::UP ? piece.face : cube.getAdjacentEdge(piece).first.face;
+	COLOR toMatch = piece.face != FACE::UP ? cube.getSticker(piece) : cube.getSticker(cube.getAdjacentEdge(piece));
+	FACE currFace = piece.face != FACE::UP ? piece.face : cube.getAdjacentEdge(piece).face;
 
 	uint8_t moves = 0;
 	while (toMatch != cube.getCenter(currFace))
@@ -113,8 +113,8 @@ LOCATION align2LEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 void insert2LEdge(Cube& cube, LOCATION piece, std::vector<Move>& solution)
 {
 	// get both stickers
-	LOCATION topPiece = piece.face == FACE::UP ? piece : cube.getAdjacentEdge(piece).first;
-	LOCATION sidePiece = piece.face != FACE::UP ? piece : cube.getAdjacentEdge(piece).first;
+	LOCATION topPiece = piece.face == FACE::UP ? piece : cube.getAdjacentEdge(piece);
+	LOCATION sidePiece = piece.face != FACE::UP ? piece : cube.getAdjacentEdge(piece);
 
 	// determine if inserting to the right or to the left
 	FACE leftFace = cube.getAdjacentFace(sidePiece.face, "y");

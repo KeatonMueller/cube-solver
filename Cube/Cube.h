@@ -93,7 +93,7 @@ public:
 	COLOR getCenter(FACE face);
 	COLOR getSticker(LOCATION loc);
 	uint64_t getFace(FACE f);
-	std::pair<LOCATION, bool> getAdjacentEdge(LOCATION loc);
+	LOCATION getAdjacentEdge(LOCATION loc);
 	std::pair<LOCATION, LOCATION> getAdjacentCorner(LOCATION loc);
 
 	Move move(FACE face, const std::string& type = "");

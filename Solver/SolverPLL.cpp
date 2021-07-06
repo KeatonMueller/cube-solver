@@ -191,8 +191,8 @@ bool shouldMoveTo(Cube& cube, COLOR(&faces)[4], uint8_t currIdx, uint8_t targetI
 	else
 	{
 		// make sure the target face matches the current sticker
-		FACE targetFace = cube.getAdjacentEdge({ FACE::UP, targetIdx }).first.face;
-		LOCATION adj = cube.getAdjacentEdge({ FACE::UP, currIdx }).first;
+		FACE targetFace = cube.getAdjacentEdge({ FACE::UP, targetIdx }).face;
+		LOCATION adj = cube.getAdjacentEdge({ FACE::UP, currIdx });
 		if (!checkLocation(cube, faces, targetFace, adj))
 			return false;
 	}
@@ -218,7 +218,7 @@ bool canPieceStay(Cube& cube, COLOR(&faces)[4], uint8_t idx)
 	// edge piece
 	else
 	{
-		LOCATION adj = cube.getAdjacentEdge({ FACE::UP, idx }).first;
+		LOCATION adj = cube.getAdjacentEdge({ FACE::UP, idx });
 		if (!checkLocation(cube, faces, adj.face, adj))
 			return false;
 		return true;
