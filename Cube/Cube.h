@@ -115,6 +115,7 @@ public:
 	* Read and execute a sequence of moves.
 	*/
 	std::vector<Move> readMoves(const std::string& moves);
+	void executeMoves(std::vector<Move>& moves);
 
 	/**
 	* Read and execute a single move.

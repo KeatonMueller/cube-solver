@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <numeric>
 
 #include "Solver.h"
 
@@ -9,7 +10,7 @@
 std::string generateScramble()
 {
 	// moves to choose from
-	std::string moves = "UDFBRLMESXYZ";
+	std::string moves = "UDFBRLMES";
 	std::string scramble = "";
 	// randomly select 30 moves
 	for (uint8_t i = 0; i < 30; i++)
@@ -26,6 +27,8 @@ std::string generateScramble()
 * Stop and report a failed scramble if it's ever unable
 * to solve cube.
 *
+* Report average solution length at the end.
+*
 * In testing, it has never failed, and has been run on
 * over one million random scrambles.
 */
@@ -33,6 +36,9 @@ void testRandomScrambles()
 {
 	// set random seed
 	srand((unsigned int)time(NULL));
+
+	// store solution lengths
+	std::vector<size_t> solutionLengths;
 
 	// perform random tests
 	Cube c;
@@ -53,9 +59,22 @@ void testRandomScrambles()
 		else
 		{
 			std::cout << "Solved scramble " << i << std::endl;
+			// verify solve (for sanity)
+			c.reset();
+			c.readMoves(scramble);
+			solution = cleanSolution(solution, true);
+			c.executeMoves(solution);
+			if (!c.isSolved())
+			{
+				std::cout << "Failed to replicate solve: " << scramble << std::endl;
+				break;
+			}
 			// printSolution(solution);
+			solutionLengths.push_back(solution.size());
 		}
 	}
+	float avgLength = (float)std::accumulate(solutionLengths.begin(), solutionLengths.end(), 0) / solutionLengths.size();
+	std::cout << "Average Solution Length: " << avgLength << std::endl;
 }
 
 int main()
@@ -70,5 +89,9 @@ int main()
 	c.readMoves(scramble);
 	std::vector<Move> solution = solve(c);
 	std::cout << "\nSolution:\n\n";
+	printSolution(solution);
+
+	solution = cleanSolution(solution, true);
+	std::cout << "\nOptimized:\n\n";
 	printSolution(solution);
 }

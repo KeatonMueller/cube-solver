@@ -31,6 +31,11 @@ enum class LAYER : uint8_t
 LAYER getLayer(LOCATION l);
 
 /**
+* Clean the given solution, removing redundancies.
+*/
+std::vector<Move> cleanSolution(std::vector<Move>& solution, bool optimized = false);
+
+/**
 * Print the given solution.
 */
 void printSolution(std::vector<Move>& solution);

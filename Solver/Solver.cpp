@@ -20,21 +20,43 @@ LAYER getLayer(LOCATION l)
 }
 
 /**
-* Clean the given solution by merging adjacent moves
-* if possible.
+* Clean the given solution by continually merging
+* adjacent moves until no more merges are possible.
+*
+* Optionally perform an optimized clean where the
+* newline markers are moved from the solution, potentially
+* leading to shorter solution lengths.
 */
-void cleanSolution(std::vector<Move>& solution)
+std::vector<Move> cleanSolution(std::vector<Move>& solution, bool optimized)
 {
-	for (size_t i = 0; i < solution.size() - 1; i++)
+	std::vector<Move> cleaned;
+	while (solution.size() > 0)
 	{
-		if (solution[i].canMergeWith(solution[i + 1]))
+		// if cleaned is empty, add first element from solution
+		if (cleaned.size() == 0)
+			cleaned.push_back(solution[0]);
+		// otherwise
+		else
 		{
-			Move newMove = solution[i].merge(solution[i + 1]);
-			solution.erase(solution.begin() + i, solution.begin() + i + 2);
-			solution.insert(solution.begin() + i, newMove);
-			i--;
+			// check if end of cleaned can merge with front of solution
+			if (cleaned[cleaned.size() - 1].canMergeWith(solution[0]))
+			{
+				// get merged move
+				Move mergedMove = cleaned[cleaned.size() - 1].merge(solution[0]);
+				// delete old end of cleaned
+				cleaned.erase(cleaned.end() - 1, cleaned.end());
+				// only add to cleaned if merged move is not NO_MOVE
+				if (mergedMove.type != Move::TYPE::NO_MOVE)
+					cleaned.push_back(mergedMove);
+			}
+			// if not, add all moves if unoptimized, or add all non NO_MOVE moves if optimized
+			else if (!optimized || solution[0].type != Move::TYPE::NO_MOVE)
+				cleaned.push_back(solution[0]);
 		}
+		// delete old start of solution
+		solution.erase(solution.begin(), solution.begin() + 1);
 	}
+	return cleaned;
 }
 
 /**
@@ -68,7 +90,5 @@ std::vector<Move> solve(Cube& cube)
 	solveOLL(cube, solution);
 	solvePLL(cube, solution);
 
-	cleanSolution(solution);
-
-	return solution;
+	return cleanSolution(solution);
 }

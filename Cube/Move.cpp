@@ -14,6 +14,9 @@ Move::Move(PIECES newPieces, TYPE newType)
 */
 bool Move::canMergeWith(const Move& move)
 {
+	// can't merge if either are NO_MOVE
+	if (type == TYPE::NO_MOVE || move.type == TYPE::NO_MOVE)
+		return false;
 	// can only merge if the pieces are the same
 	if (move.pieces != pieces)
 		return false;

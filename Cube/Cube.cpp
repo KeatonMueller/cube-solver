@@ -494,6 +494,15 @@ std::vector<Move> Cube::readMoves(const std::string& moves)
 }
 
 /**
+* Execute the moves in the given vector.
+*/
+void Cube::executeMoves(std::vector<Move>& moves)
+{
+	for (Move& move : moves)
+		parseMove(move.toString());
+}
+
+/**
 * Perform the single move represented by the given string.
 *
 * The move may be clockwise 90 degrees, counter clockwise 90 degrees,
