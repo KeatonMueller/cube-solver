@@ -2,8 +2,8 @@
 
 This is a C++ application to solve a Rubik's Cube.
 
-The method employed is a standard layer by layer method using
-OLL and PLL to solve the final layer.
+The method used by this program is the CFOP method, which you
+can learn about [here](https://ruwix.com/the-rubiks-cube/advanced-cfop-fridrich/).
 
 ## How to use it
 
