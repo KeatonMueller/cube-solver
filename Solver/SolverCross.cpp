@@ -93,6 +93,8 @@ LOCATION bringEdgeToTopLayer(Cube& cube, LOCATION piece, std::vector<Move>& solu
 		case FACE::LEFT:
 			newIdx = 1;
 			break;
+		default:
+			break;
 		}
 		return { FACE::UP, newIdx };
 	}

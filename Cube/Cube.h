@@ -198,12 +198,6 @@ private:
 	uint64_t stickers[7];
 
 	/**
-	* Bit masks for selecting certain types of stickers
-	*/
-	uint64_t edgesMask = 0x00ff00ff00ff00ff;
-	uint64_t cornersMask = 0xff00ff00ff00ff00;
-
-	/**
 	* Helper functions for selecting specific stickers
 	*/
 	char getColorChar(COLOR c);

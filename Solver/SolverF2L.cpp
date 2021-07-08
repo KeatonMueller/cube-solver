@@ -230,6 +230,8 @@ uint8_t getAboveUpIdxEdge(LOCATION loc)
 		else if (loc.idx == 7)
 			return 0;
 		break;
+	default:
+		break;
 	}
 	// shouldn't be possible, return invalid idx
 	return 8;

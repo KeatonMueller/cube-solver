@@ -51,6 +51,8 @@ Move Move::merge(const Move& move)
 			// normal + double = prime
 			newType = TYPE::PRIME;
 			break;
+		default:
+			break;
 		}
 		break;
 	case TYPE::PRIME:
@@ -67,6 +69,8 @@ Move Move::merge(const Move& move)
 		case TYPE::DOUBLE:
 			// prime + double = normal
 			newType = TYPE::NORMAL;
+			break;
+		default:
 			break;
 		}
 		break;
@@ -85,7 +89,11 @@ Move Move::merge(const Move& move)
 			// double + double = no move
 			newType = TYPE::NO_MOVE;
 			break;
+		default:
+			break;
 		}
+		break;
+	default:
 		break;
 	}
 	return Move(pieces, newType);
@@ -162,6 +170,8 @@ std::string Move::toString()
 		break;
 	case TYPE::DOUBLE:
 		value += "2";
+		break;
+	default:
 		break;
 	}
 
