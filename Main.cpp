@@ -10,13 +10,13 @@
 std::string generateScramble()
 {
 	// moves to choose from
-	std::string moves = "UDFBRLMES";
+	std::string moves[18] = { "U", "U'", "U2", "D", "D'", "D2", "F", "F'", "F2", "B", "B'", "B2", "R", "R'", "R2", "L", "L'", "L2" };
 	std::string scramble = "";
-	// randomly select 30 moves
-	for (uint8_t i = 0; i < 30; i++)
+	// randomly select 25 moves
+	for (uint8_t i = 0; i < 25; i++)
 	{
-		int idx = rand() % moves.length();
-		scramble += moves.substr(idx, 1);
+		int idx = rand() % 18;
+		scramble += moves[idx] + " ";
 	}
 	return scramble;
 }
@@ -43,13 +43,14 @@ void testRandomScrambles()
 	// perform random tests
 	Cube c;
 	std::string scramble;
-	for (int i = 0; i < 10000; i++)
+	for (int i = 0; i < 1000000; i++)
 	{
 		// reset the cube and scramble it
 		c.reset();
 		scramble = generateScramble();
 		c.readMoves(scramble);
 		// solve it
+		std::cout << i << " attempting " << scramble << "...";
 		std::vector<Move> solution = solve(c);
 		if (!c.isSolved())
 		{
@@ -58,7 +59,7 @@ void testRandomScrambles()
 		}
 		else
 		{
-			std::cout << "Solved scramble " << i << std::endl;
+			std::cout << "Solved!" << std::endl;
 			// verify solve (for sanity)
 			c.reset();
 			c.readMoves(scramble);
@@ -79,14 +80,17 @@ void testRandomScrambles()
 
 int main()
 {
+	testRandomScrambles();
+	return 0;
 	// get a scramble from the user
 	std::string scramble;
 	std::cout << "Enter scramble: ";
 	std::getline(std::cin, scramble);
 
-	// get the solution
+	// get the solution 
 	Cube c;
 	c.readMoves(scramble);
+
 	std::vector<Move> solution = solve(c);
 	std::cout << "\nSolution:\n\n";
 	printSolution(solution);

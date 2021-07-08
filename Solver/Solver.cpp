@@ -85,8 +85,7 @@ std::vector<Move> solve(Cube& cube)
 	std::vector<Move> solution;
 
 	solveCross(cube, solution);
-	solveCorners(cube, solution);
-	solveSecondLayer(cube, solution);
+	solveF2L(cube, solution);
 	solveOLL(cube, solution);
 	solvePLL(cube, solution);
 

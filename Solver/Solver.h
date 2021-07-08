@@ -6,8 +6,7 @@
 #include "Cube.h"
 #include "Move.h"
 #include "SolverCross.h"
-#include "SolverCorners.h"
-#include "Solver2L.h"
+#include "SolverF2L.h"
 #include "SolverOLL.h"
 #include "SolverPLL.h"
 
