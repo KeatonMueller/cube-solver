@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <numeric>
+#include <time.h>
 
 #include "Solver.h"
 
@@ -96,4 +97,6 @@ int main()
 	solution = cleanSolution(solution, true);
 	std::cout << "\nOptimized:\n\n";
 	printSolution(solution);
+
+	std::cin.get();
 }

@@ -63,9 +63,6 @@ LOCATION findMatchingEdge(Cube& cube, LOCATION cornerLoc)
 */
 std::pair<std::pair<LOCATION, LOCATION>, bool> findUnsolvedF2LPair(Cube& cube, COLOR crossColor)
 {
-	// get the top color
-	COLOR topColor = cube.getCenter(FACE::UP);
-
 	// find an unsolved F2L pair
 	LOCATION cornerLoc, edgeLoc;
 	std::pair<LOCATION, LOCATION> cornerAdjLocs;
@@ -429,18 +426,12 @@ void bringF2LToTop(Cube& cube, LOCATION cornerLoc, LOCATION edgeLoc, std::vector
 		{
 			// get stickers adjacent to corner
 			std::pair<LOCATION, LOCATION> cornerAdjLocs = cube.getAdjacentCorner(cornerLoc);
-			// determine which color is on the left and which is on the right
-			COLOR leftColor, rightColor;
+			// determine which color is on the left
+			COLOR leftColor;
 			if (cornerAdjLocs.first.idx == 4)
-			{
 				leftColor = cube.getSticker(cornerAdjLocs.first);
-				rightColor = cube.getSticker(cornerAdjLocs.second);
-			}
 			else
-			{
 				leftColor = cube.getSticker(cornerAdjLocs.second);
-				rightColor = cube.getSticker(cornerAdjLocs.first);
-			}
 
 			// place edge in proper position
 			uint8_t targetIdx;

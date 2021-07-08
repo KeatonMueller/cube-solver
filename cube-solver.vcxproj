@@ -168,6 +168,9 @@
     <ClInclude Include="Solver\SolverPLL.h" />
     <ClInclude Include="Util\Util.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

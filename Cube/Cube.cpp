@@ -1081,7 +1081,7 @@ void Cube::lPrime()
 	// turn the adjacent stickers on the up, front, down, and back faces 
 	uint64_t toSave = getFace(FACE::UP) & leftMask;
 	setFace(FACE::UP, (getFace(FACE::UP) & ~leftMask) | (getFace(FACE::FRONT) & leftMask));
-	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~leftMask) | getFace(FACE::DOWN) & leftMask);
+	setFace(FACE::FRONT, (getFace(FACE::FRONT) & ~leftMask) | (getFace(FACE::DOWN) & leftMask));
 	setFace(FACE::DOWN, (getFace(FACE::DOWN) & ~leftMask) | rotateRight(getFace(FACE::BACK) & rightMask, 32));
 	setFace(FACE::BACK, (getFace(FACE::BACK) & ~rightMask) | rotateRight(toSave, 32));
 }
