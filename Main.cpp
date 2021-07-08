@@ -80,8 +80,6 @@ void testRandomScrambles()
 
 int main()
 {
-	testRandomScrambles();
-	return 0;
 	// get a scramble from the user
 	std::string scramble;
 	std::cout << "Enter scramble: ";
