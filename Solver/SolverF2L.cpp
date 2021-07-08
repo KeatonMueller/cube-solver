@@ -65,7 +65,6 @@ std::pair<std::pair<LOCATION, LOCATION>, bool> findUnsolvedF2LPair(Cube& cube, C
 {
 	// find an unsolved F2L pair
 	LOCATION cornerLoc, edgeLoc;
-	std::pair<LOCATION, LOCATION> cornerAdjLocs;
 	// search every corner location
 	for (uint8_t cornerFace = 0; cornerFace < 6; cornerFace++)
 	{
