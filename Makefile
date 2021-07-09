@@ -13,7 +13,7 @@ else
 	TARGET = cube-solver
 endif
 
-all: cube-solver
+all: $(FILES) 
 	$(CC) $(FILES) $(CFLAGS) $(INCLUDE_FLAGS) && \
 	$(CC) *.o -o cube-solver $(LINKER_FLAGS)
 
