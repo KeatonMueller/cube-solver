@@ -1,6 +1,6 @@
 CC = g++
 FILES = Main.cpp $(wildcard ./**/*.cpp)
-CFLAGS = -std=c++14 -c -g3 -Wall -O3 -ICube -ISolver -IUtil
+CFLAGS = -std=c++14 -c -Wall -ICube -ISolver -IUtil
 INCLUDE_FLAGS = -ICube -ISolver -IUtil
 
 ifeq ($(OS),Windows_NT)
@@ -13,9 +13,15 @@ else
 	TARGET = cube-solver
 endif
 
-all: $(FILES) 
-	$(CC) $(FILES) $(CFLAGS) $(INCLUDE_FLAGS) && \
+all: debug
+
+debug: $(FILES) 
+	$(CC) $(FILES) $(CFLAGS) -g $(INCLUDE_FLAGS) && \
 	$(CC) *.o -o cube-solver $(LINKER_FLAGS)
+
+release: $(FILES) 
+	$(CC) $(FILES) $(CFLAGS) -O3 $(INCLUDE_FLAGS) && \
+	$(CC) *.o -o cube-solver -s $(LINKER_FLAGS)
 
 clean:
 	$(RM) *.o $(TARGET)
