@@ -10,8 +10,8 @@ ifeq ($(OS),Windows_NT)
 	TARGET = cube-solver.exe
 else
 	RM = rm
-        LINKER_FLAGS = -lSDL2main -lSDL2 -L/usr/local/Cellar/sdl2/2.0.14_1/lib
-        INCLUDE_FLAGS := $(INCLUDE_FLAGS) -I/usr/local/Cellar/sdl2/2.0.14_1/include
+	LINKER_FLAGS = -lSDL2main -lSDL2 -L/usr/local/Cellar/sdl2/2.0.14_1/lib
+	INCLUDE_FLAGS := $(INCLUDE_FLAGS) -I/usr/local/Cellar/sdl2/2.0.14_1/include
 	TARGET = cube-solver
 endif
 
