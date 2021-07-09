@@ -150,6 +150,8 @@ LOCATION moveCornerOverCenter(Cube& cube, LOCATION piece, std::vector<Move>& sol
 		case FACE::UP:
 			piece.idx = (piece.idx + 2) % 8;
 			break;
+		default:
+			break;
 		}
 		moves++;
 	}

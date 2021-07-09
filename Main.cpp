@@ -79,7 +79,7 @@ void testRandomScrambles()
 	std::cout << "Average Solution Length: " << avgLength << std::endl;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
 	// get a scramble from the user
 	std::string scramble;
@@ -98,5 +98,8 @@ int main()
 	std::cout << "\nOptimized:\n\n";
 	printSolution(solution);
 
+	std::cout << "\nPress Enter to exit" << std::endl;
 	std::cin.get();
+
+	return 0;
 }

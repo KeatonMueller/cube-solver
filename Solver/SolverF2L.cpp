@@ -811,7 +811,7 @@ void prepF2LToInsert(Cube& cube, LOCATION cornerLoc, LOCATION edgeLoc, std::vect
 				solution.push_back(cube.move(cornerLoc.face, Move::TYPE::PRIME));
 			}
 			// if cross color is facing right and they need to be set up
-			else if (cornerLoc.idx == 0 && (edgeUpIdx + 3) != cornerUpIdx)
+			else if (cornerLoc.idx == 0 && (edgeUpIdx + 3) % 8 != cornerUpIdx)
 			{
 				// they're guaranteed to be split, so only a U is necessary
 				// need slot at cornerUpIdx + 2 to be unsolved
