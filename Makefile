@@ -5,11 +5,13 @@ INCLUDE_FLAGS = -ICube -ISolver -IUtil
 
 ifeq ($(OS),Windows_NT)
 	RM = cmd \/C del
-	LINKER_FLAGS := -lmingw32 -lSDL2main -lSDL2 -LC:/libsdl/lib
+	LINKER_FLAGS = -lmingw32 -lSDL2main -lSDL2 -LC:/libsdl/lib
 	INLCUDE_FLAGS := $(INCLUDE_FLAGS) -IC:/libsdl/include
 	TARGET = cube-solver.exe
 else
 	RM = rm
+        LINKER_FLAGS = -lSDL2main -lSDL2 -L/usr/local/Cellar/sdl2/2.0.14_1/lib
+        INCLUDE_FLAGS := $(INCLUDE_FLAGS) -I/usr/local/Cellar/sdl2/2.0.14_1/include
 	TARGET = cube-solver
 endif
 
