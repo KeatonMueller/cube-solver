@@ -5,7 +5,7 @@ This is a C++ application to solve a Rubik's Cube.
 The method used by this program is the CFOP method, which you
 can learn about [here](https://ruwix.com/the-rubiks-cube/advanced-cfop-fridrich/).
 
-The average solution length is around 73 moves, using half turn metric. While
+The average solution length is around 72 moves, using half turn metric. While
 this is far from the optimal number of 20, it isn't terribly far off from what
 human speedcubers can achieve using CFOP, which is usually around 50-60.
 
