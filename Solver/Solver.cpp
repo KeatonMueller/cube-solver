@@ -3,8 +3,8 @@
 #include "Solver.h"
 
 /**
-* Find which layer the given location is in.
-*/
+ * Find which layer the given location is in.
+ */
 LAYER getLayer(LOCATION l)
 {
 	if (l.face == FACE::DOWN)
@@ -20,13 +20,13 @@ LAYER getLayer(LOCATION l)
 }
 
 /**
-* Clean the given solution by continually merging
-* adjacent moves until no more merges are possible.
-*
-* Optionally perform an optimized clean where the
-* newline markers are moved from the solution, potentially
-* leading to shorter solution lengths.
-*/
+ * Clean the given solution by continually merging
+ * adjacent moves until no more merges are possible.
+ *
+ * Optionally perform an optimized clean where the
+ * newline markers are moved from the solution, potentially
+ * leading to shorter solution lengths.
+ */
 std::vector<Move> cleanSolution(std::vector<Move>& solution, bool optimized)
 {
 	std::vector<Move> cleaned;
@@ -60,8 +60,8 @@ std::vector<Move> cleanSolution(std::vector<Move>& solution, bool optimized)
 }
 
 /**
-* Print the given solution.
-*/
+ * Print the given solution.
+ */
 void printSolution(std::vector<Move>& solution)
 {
 	for (auto& move : solution)
@@ -77,8 +77,25 @@ void printSolution(std::vector<Move>& solution)
 }
 
 /**
-* Solve the given Rubik's Cube.
-*/
+ * Return a string value of the solution.
+ */
+std::string solutionToString(std::vector<Move>& solution)
+{
+	std::string str;
+
+	for (Move& move : solution)
+	{
+		// don't add moves of type no move
+		if (move.type != Move::TYPE::NO_MOVE)
+			str += move.toString() + " ";
+	}
+
+	return str;
+}
+
+/**
+ * Solve the given Rubik's Cube.
+ */
 std::vector<Move> solve(Cube& cube)
 {
 	// vector of moves in the solution
