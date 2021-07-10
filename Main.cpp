@@ -1,13 +1,13 @@
-#include <string>
 #include <iostream>
 #include <numeric>
+#include <string>
 #include <time.h>
 
 #include "Solver.h"
 
 /**
-* Generate a random scramble.
-*/
+ * Generate a random scramble.
+ */
 std::string generateScramble()
 {
 	// moves to choose from
@@ -23,16 +23,16 @@ std::string generateScramble()
 }
 
 /**
-* Test the solver on a sequence of random scrambles.
-*
-* Stop and report a failed scramble if it's ever unable
-* to solve cube.
-*
-* Report average solution length at the end.
-*
-* In testing, it has never failed, and has been run on
-* over one million random scrambles.
-*/
+ * Test the solver on a sequence of random scrambles.
+ *
+ * Stop and report a failed scramble if it's ever unable
+ * to solve cube.
+ *
+ * Report average solution length at the end.
+ *
+ * In testing, it has never failed, and has been run on
+ * over one million random scrambles.
+ */
 void testRandomScrambles()
 {
 	// set random seed
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 	std::cout << "Enter scramble: ";
 	std::getline(std::cin, scramble);
 
-	// get the solution 
+	// get the solution
 	Cube c;
 	c.readMoves(scramble);
 
