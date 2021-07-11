@@ -44,7 +44,7 @@ void testRandomScrambles()
 	// perform random tests
 	Cube c;
 	std::string scramble;
-	for (int i = 0; i < 1000000; i++)
+	for (int i = 0; i < 50000; i++)
 	{
 		// reset the cube and scramble it
 		c.reset();
